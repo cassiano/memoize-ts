@@ -14,12 +14,14 @@ type comparisonFnType<T> = (
   rightArgs: Parameters<MemoizeFnType<T>>
 ) => boolean
 
-// TS types generator: https://tsplay.dev/wEeVVw
+type EmptyObjectType = Record<string | number | symbol, never>
+
+// TS types generator: https://tsplay.dev/NnY6qw
 
 // ====================================
 // Copy generated types below this line
 /* prettier-ignore */ type MemoizeUtilsType<T> = { clearEntry: (...args: unknown[]) => void; } & MemoizeUtilsCommonType<T>;
-/* prettier-ignore */ type MemoizeUtils0ParamsType<T> = {} & MemoizeUtilsCommonType<T>;
+/* prettier-ignore */ type MemoizeUtils0ParamsType<T> = EmptyObjectType & MemoizeUtilsCommonType<T>;
 /* prettier-ignore */ type MemoizeUtils1ParamType<T, P1> = { clearEntry: (p1: P1) => void; } & MemoizeUtilsCommonType<T>;
 /* prettier-ignore */ type MemoizeUtils2ParamsType<T, P1, P2> = { clearEntry: (p1: P1, p2: P2) => void; } & MemoizeUtilsCommonType<T>;
 /* prettier-ignore */ type MemoizeUtils3ParamsType<T, P1, P2, P3> = { clearEntry: (p1: P1, p2: P2, p3: P3) => void; } & MemoizeUtilsCommonType<T>;
