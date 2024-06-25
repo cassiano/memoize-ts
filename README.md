@@ -17,43 +17,6 @@ You must install Deno (https://docs.deno.com/runtime/manual/getting_started/inst
 ✗ deno test test.ts
 ```
 
-## Known limitations:
-
-- The current implementation does not support optional parameters, due to the way TypeScript's function overloading works. A possible workaround is shown below:
-
-This DOES NOT work:
-
-```ts
-const h = memoize(
-  (_p1: number[], _p2: string, _p3: Record<string, number>, p4 = false) => Math.random(),
-  ([leftP1, leftP2, leftP3, leftP4], [rightP1, rightP2, rightP3, rightP4]) =>
-    leftP1.length === rightP1.length &&
-    leftP2.toUpperCase() === rightP2.toUpperCase() &&
-    JSON.stringify(leftP3) === JSON.stringify(rightP3) &&
-    leftP4 === rightP4
-)
-```
-
-However, this will work as expected:
-
-```ts
-const p4DefaultValue = false
-
-const h = memoize(
-  (_p1: number[], _p2: string, _p3: Record<string, number>, p4: boolean | undefined) => (
-    (p4 ??= p4DefaultValue), Math.random()
-  ),
-  (
-    [leftP1, leftP2, leftP3, leftP4 = p4DefaultValue],
-    [rightP1, rightP2, rightP3, rightP4 = p4DefaultValue]
-  ) =>
-    leftP1.length === rightP1.length &&
-    leftP2.toUpperCase() === rightP2.toUpperCase() &&
-    JSON.stringify(leftP3) === JSON.stringify(rightP3) &&
-    leftP4 === rightP4
-)
-```
-
 ### Basic usage (notice how the memoized function gets properly typed):
 
 ```ts
@@ -113,4 +76,41 @@ console.log(f([1, 2, 3], 'abc', { x: 1 }))
 console.log(f([3, 2, 1], 'ABC', { x: 1 }))
 console.log(f([1, 3, 5], 'aBc', { x: 1 }))
 console.log(f([0, 1], '', { x: 2 }))
+```
+
+## Known limitations:
+
+- The current implementation does not support optional parameters, due to the way TypeScript's function overloading works. A possible workaround is shown below:
+
+This DOES NOT work:
+
+```ts
+const h = memoize(
+  (_p1: number[], _p2: string, _p3: Record<string, number>, p4 = false) => Math.random(),
+  ([leftP1, leftP2, leftP3, leftP4], [rightP1, rightP2, rightP3, rightP4]) =>
+    leftP1.length === rightP1.length &&
+    leftP2.toUpperCase() === rightP2.toUpperCase() &&
+    JSON.stringify(leftP3) === JSON.stringify(rightP3) &&
+    leftP4 === rightP4
+)
+```
+
+However, this will work as expected:
+
+```ts
+const p4DefaultValue = false
+
+const h = memoize(
+  (_p1: number[], _p2: string, _p3: Record<string, number>, p4: boolean | undefined) => (
+    (p4 ??= p4DefaultValue), Math.random()
+  ),
+  (
+    [leftP1, leftP2, leftP3, leftP4 = p4DefaultValue],
+    [rightP1, rightP2, rightP3, rightP4 = p4DefaultValue]
+  ) =>
+    leftP1.length === rightP1.length &&
+    leftP2.toUpperCase() === rightP2.toUpperCase() &&
+    JSON.stringify(leftP3) === JSON.stringify(rightP3) &&
+    leftP4 === rightP4
+)
 ```
