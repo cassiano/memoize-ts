@@ -1,0 +1,14 @@
+{
+  "name": "memoize-ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@swc-node/register": "^1.9.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
+  }
+}
