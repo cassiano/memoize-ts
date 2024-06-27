@@ -1,8 +1,13 @@
 {
   "name": "@cdandrea/memoize-ts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "memoize() function written in TypeScript, 100% type-safe",
-  "main": "memoize.ts",
+  "main": "memoize.js",
+  "types": "memoize.d.ts",
+  "files": [
+    "memoize.js",
+    "memoize.d.ts"
+  ],
   "keywords": [],
   "author": "Cassiano D'Andrea",
   "license": "ISC",
