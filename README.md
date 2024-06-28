@@ -1,4 +1,4 @@
-# `memoize()` function written in TypeScript
+# 100% type-safe `memoize()` function written in TypeScript
 
 ## Features include:
 
@@ -82,7 +82,7 @@ console.log(f([0, 1], '', { x: 2 }))
 
 - The current implementation does not support optional parameters, due to the way TypeScript's function overloading works. A possible workaround is shown below:
 
-This DOES NOT work:
+This will not work:
 
 ```ts
 const h = memoize(
@@ -95,7 +95,7 @@ const h = memoize(
 )
 ```
 
-However, this will work as expected:
+However, with some minor changes, this will work as expected:
 
 ```ts
 const p4DefaultValue = false

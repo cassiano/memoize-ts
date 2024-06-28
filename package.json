@@ -1,14 +1,23 @@
 {
   "name": "@cdandrea/memoize-ts",
-  "version": "1.0.4",
-  "description": "memoize() function written in TypeScript, 100% type-safe",
+  "version": "1.0.5",
+  "description": "100% type-safe memoize() function written in TypeScript",
   "main": "memoize.js",
   "types": "memoize.d.ts",
   "files": [
     "memoize.js",
     "memoize.d.ts"
   ],
-  "keywords": [],
+  "keywords": [
+    "memoization",
+    "memoize",
+    "cache",
+    "caching",
+    "100% type-safe",
+    "supports up to 100 parameters",
+    "allows custom parameter comparison function",
+    "allows clearing entire cache or particular entries"
+  ],
   "author": "Cassiano D'Andrea",
   "license": "ISC",
   "devDependencies": {
