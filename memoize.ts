@@ -16,6 +16,41 @@ type comparisonFnType<T> = (
 
 type EmptyObjectType = Record<string | number | symbol, never>
 
+export const valuesEqual = (left: unknown, right: unknown): boolean => {
+  if (left === right) return true // Are exactly the same values?
+
+  if (typeof left !== typeof right) return false // Do they have different types?
+
+  // Are both values arrays?
+  if (Array.isArray(left) && Array.isArray(right)) {
+    if (left.length !== right.length) return false // Arrays have different lengths?
+
+    return left.every((leftValue, i) => valuesEqual(leftValue, right[i])) // Do all values match?
+  }
+
+  // Are both values objects? PS: one (and only one) of them could possibly be `null`.
+  if (typeof left === 'object' && typeof right === 'object') {
+    if (left === null || right === null) return false // Is either value `null`?
+
+    const leftKeys = Object.keys(left)
+    const rightKeys = Object.keys(right)
+
+    if (
+      leftKeys.length !== rightKeys.length || // Objects have different number of keys?
+      !valuesEqual(leftKeys.sort(), rightKeys.sort()) // Or different keys (no matter their order)?
+    )
+      return false
+
+    // Do all key+value pairs match?
+    return Object.entries(left).every(([leftKey, leftValue]) =>
+      valuesEqual(leftValue, right[leftKey as keyof typeof right])
+    )
+  }
+
+  // Values are not equal!
+  return false
+}
+
 // TS types generator: https://tsplay.dev/NnY6qw
 
 // ====================================
@@ -339,9 +374,7 @@ export function memoize<T>(
   const cache: MemoizeCacheType<T> = []
 
   const findCacheIndex = (cacheEntry: unknown[]) =>
-    cache.findIndex(
-      ({ key }) => comparisonFn?.(key, cacheEntry) ?? key.every((arg, i) => arg === cacheEntry[i])
-    )
+    cache.findIndex(({ key }) => (comparisonFn ?? valuesEqual)(key, cacheEntry))
 
   const memoizedFn: MemoizeFnType<T> & MemoizeUtilsType<T> = (...args) => {
     let value: T
