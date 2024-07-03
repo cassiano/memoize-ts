@@ -85,22 +85,22 @@ Deno.test('Memoizing factorial() function', () => {
   assertEquals(calculations, 10)
 
   factorial(10)
-  assertEquals(calculations, 10) // Assures no further calculations/calls were needed.
+  assertEquals(calculations, 10) // Assures no further calculations were needed.
 
   factorial(10)
-  assertEquals(calculations, 10) // Assures no further calculations/calls were needed.
+  assertEquals(calculations, 10) // Assures no further calculations were needed.
 
   factorial(9)
-  assertEquals(calculations, 10) // Assures no further calculations/calls were needed.
+  assertEquals(calculations, 10) // Assures no further calculations were needed.
 
   factorial(8)
-  assertEquals(calculations, 10) // Assures no further calculations/calls were needed.
+  assertEquals(calculations, 10) // Assures no further calculations were needed.
 
   factorial(11)
   assertEquals(calculations, 11)
 
   factorial(11)
-  assertEquals(calculations, 11) // Assures no further calculations/calls were needed.
+  assertEquals(calculations, 11) // Assures no further calculations were needed.
 })
 
 Deno.test('Memoizing fibonacci() function', () => {
@@ -128,19 +128,19 @@ Deno.test('Memoizing fibonacci() function', () => {
   assertEquals(calculations, 5)
 
   fibonacci(4)
-  assertEquals(calculations, 5) // Assures no further calculations/calls were needed.
+  assertEquals(calculations, 5) // Assures no further calculations were needed.
 
   fibonacci(3)
-  assertEquals(calculations, 5) // Assures no further calculations/calls were needed.
+  assertEquals(calculations, 5) // Assures no further calculations were needed.
 
   fibonacci(2)
-  assertEquals(calculations, 5) // Assures no further calculations/calls were needed.
+  assertEquals(calculations, 5) // Assures no further calculations were needed.
 
   fibonacci(1)
-  assertEquals(calculations, 5) // Assures no further calculations/calls were needed.
+  assertEquals(calculations, 5) // Assures no further calculations were needed.
 
   fibonacci(0)
-  assertEquals(calculations, 5) // Assures no further calculations/calls were needed.
+  assertEquals(calculations, 5) // Assures no further calculations were needed.
 })
 
 Deno.test('Memoizing knapsack() function, using a single object parameter', () => {
@@ -172,19 +172,19 @@ Deno.test('Memoizing knapsack() function, using a single object parameter', () =
   assertEquals(calculations, 9)
 
   knapsack({ n: 3, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
-  assertEquals(calculations, 9)
+  assertEquals(calculations, 9) // Assures no further calculations were needed.
 
   knapsack({ n: 3, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
-  assertEquals(calculations, 9)
+  assertEquals(calculations, 9) // Assures no further calculations were needed.
 
   knapsack({ n: 4, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
   assertEquals(calculations, 10)
 
   knapsack({ n: 4, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
-  assertEquals(calculations, 10)
+  assertEquals(calculations, 10) // Assures no further calculations were needed.
 
   knapsack({ n: 4, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
-  assertEquals(calculations, 10)
+  assertEquals(calculations, 10) // Assures no further calculations were needed.
 })
 
 Deno.test('Memoizing knapsack() function, using a single tuple parameter', () => {
@@ -209,17 +209,17 @@ Deno.test('Memoizing knapsack() function, using a single tuple parameter', () =>
   assertEquals(calculations, 9)
 
   knapsack([3, 2, [10, 20, 0], [1, 1, 1]])
-  assertEquals(calculations, 9)
+  assertEquals(calculations, 9) // Assures no further calculations were needed.
 
   knapsack([3, 2, [10, 20, 0], [1, 1, 1]])
-  assertEquals(calculations, 9)
+  assertEquals(calculations, 9) // Assures no further calculations were needed.
 
   knapsack([4, 2, [10, 20, 0], [1, 1, 1]])
   assertEquals(calculations, 10)
 
   knapsack([4, 2, [10, 20, 0], [1, 1, 1]])
-  assertEquals(calculations, 10)
+  assertEquals(calculations, 10) // Assures no further calculations were needed.
 
   knapsack([4, 2, [10, 20, 0], [1, 1, 1]])
-  assertEquals(calculations, 10)
+  assertEquals(calculations, 10) // Assures no further calculations were needed.
 })
