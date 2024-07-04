@@ -45,18 +45,31 @@ Deno.test('Comparing values', () => {
     true
   )
 
+  // Objects with array elements.
+  assertEquals(compareValues({ x: [1, 2, 3], y: 4 }, { x: [1, 2, 3], y: 4 }), true)
+
+  // Arrays with object elements.
+  assertEquals(compareValues([1, 2, { x: [3, 4, 5], y: 6 }], [1, 2, { y: 6, x: [3, 4, 5] }]), true)
+
+  // Arrays x objects with sequencial integer (natural, ≥ 0) indexes.
+  assertEquals(compareValues([10, 20, 30, 40, 50], { 0: 10, 1: 20, 2: 30, 3: 40, 4: 50 }), true)
+  assertEquals(compareValues([10, 20, 30, 40, 50], { 4: 50, 3: 40, 2: 30, 1: 20, 0: 10 }), true) // Different key order.
+
   // Classes.
+
   class C {
     constructor(public a: number, public b: string) {}
   }
+
   class D {
-    constructor(public c: C, public d: boolean) {}
+    constructor(public c: C, public d: boolean[]) {}
   }
-  const d1 = new D(new C(1, '...'), true)
-  const d2 = new D(new C(1, '...'), true)
-  const d3 = new D(new C(1, '...'), false)
-  const d4 = new D(new C(2, '...'), true)
-  const d5 = new D(new C(1, '.'), true)
+
+  const d1 = new D(new C(1, '...'), [true, false, true])
+  const d2 = new D(new C(1, '...'), [true, false, true])
+  const d3 = new D(new C(1, '...'), [false, true, false])
+  const d4 = new D(new C(2, '...'), [true, false, true])
+  const d5 = new D(new C(1, '.'), [true, false, true])
 
   assertEquals(compareValues(d1, d2), true)
   assertEquals(compareValues(d2, d1), true)
