@@ -44,6 +44,29 @@ Deno.test('Comparing values', () => {
     compareValues({ x: 1, y: 2, z: [1, 2, 3, [4, [5, [6]]]] }, { z: [1, 2, 3, [4, [5, [6]]]], x: 1, y: 2 }),
     true
   )
+
+  // Classes.
+  class C {
+    constructor(public a: number, public b: string) {}
+  }
+  class D {
+    constructor(public c: C, public d: boolean) {}
+  }
+  const d1 = new D(new C(1, '...'), true)
+  const d2 = new D(new C(1, '...'), true)
+  const d3 = new D(new C(1, '...'), false)
+  const d4 = new D(new C(2, '...'), true)
+  const d5 = new D(new C(1, '.'), true)
+
+  assertEquals(compareValues(d1, d2), true)
+  assertEquals(compareValues(d2, d1), true)
+  assertEquals(compareValues(d1, d1), true)
+  assertEquals(compareValues(d1, d3), false)
+  assertEquals(compareValues(d3, d1), false)
+  assertEquals(compareValues(d1, d4), false)
+  assertEquals(compareValues(d4, d1), false)
+  assertEquals(compareValues(d1, d5), false)
+  assertEquals(compareValues(d5, d1), false)
 })
 
 Deno.test('Memoizing 0 parameters functions', () => {
