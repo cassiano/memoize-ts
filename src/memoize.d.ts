@@ -7,6 +7,7 @@ type MemoizeUtilsCommonType<T> = {
     getCache: () => MemoizeCacheType<T>;
 };
 type EmptyObjectType = Record<string | number | symbol, never>;
+export declare const valuesEqual: (left: unknown, right: unknown) => boolean;
 type MemoizeUtils0ParamsType<T> = EmptyObjectType & MemoizeUtilsCommonType<T>;
 type MemoizeUtils1ParamType<T, P1> = {
     clearEntry: (p1: P1) => void;

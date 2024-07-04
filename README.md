@@ -9,13 +9,7 @@
 
 ## Pre-requisites:
 
-You must install Deno (https://docs.deno.com/runtime/manual/getting_started/installation) before running tests.
-
-## To run tests:
-
-```
-✗ deno test test.ts
-```
+None.
 
 ### Basic usage (notice how the memoized function gets properly typed):
 

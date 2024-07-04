@@ -1,16 +1,47 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.valuesEqual = void 0;
 exports.memoize = memoize;
 var DEBUG = false;
+var valuesEqual = function (left, right) {
+    if (left === right)
+        return true; // Are exactly the same values?
+    if (typeof left !== typeof right)
+        return false; // Do they have different types?
+    // Are both values arrays?
+    if (Array.isArray(left) && Array.isArray(right)) {
+        if (left.length !== right.length)
+            return false; // Arrays have different lengths?
+        return left.every(function (leftValue, i) { return (0, exports.valuesEqual)(leftValue, right[i]); }); // Do all values match?
+    }
+    // Are both values objects? PS: one (and only one) of them could possibly be `null`.
+    if (typeof left === 'object' && typeof right === 'object') {
+        if (left === null || right === null)
+            return false; // Is either value `null`?
+        var leftKeys = Object.keys(left);
+        var rightKeys = Object.keys(right);
+        if (leftKeys.length !== rightKeys.length || // Objects have different number of keys?
+            !(0, exports.valuesEqual)(leftKeys.sort(), rightKeys.sort()) // Or different keys (no matter their order)?
+        )
+            return false;
+        // Do all key+value pairs match?
+        return Object.entries(left).every(function (_a) {
+            var leftKey = _a[0], leftValue = _a[1];
+            return (0, exports.valuesEqual)(leftValue, right[leftKey]);
+        });
+    }
+    // Values are not equal!
+    return false;
+};
+exports.valuesEqual = valuesEqual;
 // Copy generated types above this line
 // ====================================
 function memoize(fn, comparisonFn) {
     var cache = [];
     var findCacheIndex = function (cacheEntry) {
         return cache.findIndex(function (_a) {
-            var _b;
             var key = _a.key;
-            return (_b = comparisonFn === null || comparisonFn === void 0 ? void 0 : comparisonFn(key, cacheEntry)) !== null && _b !== void 0 ? _b : key.every(function (arg, i) { return arg === cacheEntry[i]; });
+            return (comparisonFn !== null && comparisonFn !== void 0 ? comparisonFn : exports.valuesEqual)(key, cacheEntry);
         });
     };
     var memoizedFn = function () {
