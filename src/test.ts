@@ -1,47 +1,47 @@
 import { assertEquals, assertNotEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts'
-import { memoize, valuesEqual } from './memoize.ts'
+import { memoize, compareValues } from './memoize.ts'
 
 Deno.test('Comparing values', () => {
   // `undefined` and `null` combined.
-  assertEquals(valuesEqual(undefined, undefined), true)
-  assertEquals(valuesEqual(undefined, null), false)
-  assertEquals(valuesEqual(null, undefined), false)
-  assertEquals(valuesEqual(null, null), true)
+  assertEquals(compareValues(undefined, undefined), true)
+  assertEquals(compareValues(undefined, null), false)
+  assertEquals(compareValues(null, undefined), false)
+  assertEquals(compareValues(null, null), true)
 
   // `undefined` compared to other types.
-  assertEquals(valuesEqual(undefined, 1), false)
-  assertEquals(valuesEqual(undefined, '...'), false)
-  assertEquals(valuesEqual(undefined, true), false)
-  assertEquals(valuesEqual(undefined, []), false)
-  assertEquals(valuesEqual(undefined, {}), false)
+  assertEquals(compareValues(undefined, 1), false)
+  assertEquals(compareValues(undefined, '...'), false)
+  assertEquals(compareValues(undefined, true), false)
+  assertEquals(compareValues(undefined, []), false)
+  assertEquals(compareValues(undefined, {}), false)
 
   // `null` compared to other types.
-  assertEquals(valuesEqual(null, 1), false)
-  assertEquals(valuesEqual(null, '...'), false)
-  assertEquals(valuesEqual(null, true), false)
-  assertEquals(valuesEqual(null, []), false)
-  assertEquals(valuesEqual(null, {}), false)
+  assertEquals(compareValues(null, 1), false)
+  assertEquals(compareValues(null, '...'), false)
+  assertEquals(compareValues(null, true), false)
+  assertEquals(compareValues(null, []), false)
+  assertEquals(compareValues(null, {}), false)
 
-  // Different types.
-  assertEquals(valuesEqual(1, '1'), false)
+  // Different types. No need for this test, since it is flagged by TS at compile-time.
+  // assertEquals(valuesEqual(1, '1'), false)
 
   // Arrays.
-  assertEquals(valuesEqual([], []), true)
-  assertEquals(valuesEqual([1], [1]), true)
-  assertEquals(valuesEqual([1, 2], [1, 2]), true)
-  assertEquals(valuesEqual([1, 2, 3], [1, 2, 3]), true)
-  assertEquals(valuesEqual([1, 2, 3, [4, [5, [6]]]], [1, 2, 3, [4, [5, [6]]]]), true)
-  assertEquals(valuesEqual([1, 2, 3], [1, 2]), false) // `left` having more elements than `right`.
-  assertEquals(valuesEqual([1, 2, 3], [1, 2, 3, 4]), false) // `left` having less elements than `right`.
+  assertEquals(compareValues([], []), true)
+  assertEquals(compareValues([1], [1]), true)
+  assertEquals(compareValues([1, 2], [1, 2]), true)
+  assertEquals(compareValues([1, 2, 3], [1, 2, 3]), true)
+  assertEquals(compareValues([1, 2, 3, [4, [5, [6]]]], [1, 2, 3, [4, [5, [6]]]]), true)
+  assertEquals(compareValues([1, 2, 3], [1, 2]), false) // `left` having more elements than `right`.
+  assertEquals(compareValues([1, 2, 3], [1, 2, 3, 4]), false) // `left` having less elements than `right`.
 
   // Objects.
-  assertEquals(valuesEqual({}, {}), true)
-  assertEquals(valuesEqual({ x: 1 }, { x: 1 }), true)
-  assertEquals(valuesEqual({ x: 1, y: 2, z: 3 }, { z: 3, x: 1, y: 2 }), true) // Different order.
-  assertEquals(valuesEqual({ x: 1, y: 2, z: 3 }, { x: 1, y: 2 }), false) // `left` having more key+value pairs than `right`.
-  assertEquals(valuesEqual({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3, w: 4 }), false) // `left` having less key+value pairs than `right`.
+  assertEquals(compareValues({}, {}), true)
+  assertEquals(compareValues({ x: 1 }, { x: 1 }), true)
+  assertEquals(compareValues({ x: 1, y: 2, z: 3 }, { z: 3, x: 1, y: 2 }), true) // Different order.
+  assertEquals(compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2 }), false) // `left` having more key+value pairs than `right`.
+  assertEquals(compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3, w: 4 }), false) // `left` having less key+value pairs than `right`.
   assertEquals(
-    valuesEqual({ x: 1, y: 2, z: [1, 2, 3, [4, [5, [6]]]] }, { z: [1, 2, 3, [4, [5, [6]]]], x: 1, y: 2 }),
+    compareValues({ x: 1, y: 2, z: [1, 2, 3, [4, [5, [6]]]] }, { z: [1, 2, 3, [4, [5, [6]]]], x: 1, y: 2 }),
     true
   )
 })

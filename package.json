@@ -1,6 +1,6 @@
 {
   "name": "@cdandrea/memoize-ts",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "100% type-safe memoize() function written in TypeScript",
   "main": "src/memoize.js",
   "types": "src/memoize.d.ts",

@@ -16,16 +16,16 @@ type comparisonFnType<T> = (
 
 type EmptyObjectType = Record<string | number | symbol, never>
 
-export const valuesEqual = (left: unknown, right: unknown): boolean => {
+export const compareValues = <T>(left: T, right: T): boolean => {
   if (left === right) return true // Are exactly the same values?
 
-  if (typeof left !== typeof right) return false // Do they have different types?
+  if (typeof left !== typeof right) return false // Do they have different types? In general flagged by TS at compile-time, but still needed when running is JS.
 
   // Are both values arrays?
   if (Array.isArray(left) && Array.isArray(right)) {
     if (left.length !== right.length) return false // Arrays have different lengths?
 
-    return left.every((leftValue, i) => valuesEqual(leftValue, right[i])) // Do all values match?
+    return left.every((leftValue, i) => compareValues(leftValue, right[i])) // Do all values match?
   }
 
   // Are both values objects? PS: one (and only one) of them could possibly be `null`.
@@ -37,13 +37,13 @@ export const valuesEqual = (left: unknown, right: unknown): boolean => {
 
     if (
       leftKeys.length !== rightKeys.length || // Objects have different number of keys?
-      !valuesEqual(leftKeys.sort(), rightKeys.sort()) // Or different keys (no matter their order)?
+      !compareValues(leftKeys.sort(), rightKeys.sort()) // Or different keys (no matter their order)?
     )
       return false
 
     // Do all key+value pairs match?
     return Object.entries(left).every(([leftKey, leftValue]) =>
-      valuesEqual(leftValue, right[leftKey as keyof typeof right])
+      compareValues(leftValue, right[leftKey as keyof typeof right])
     )
   }
 
@@ -374,7 +374,7 @@ export function memoize<T>(
   const cache: MemoizeCacheType<T> = []
 
   const findCacheIndex = (cacheEntry: unknown[]) =>
-    cache.findIndex(({ key }) => (comparisonFn ?? valuesEqual)(key, cacheEntry))
+    cache.findIndex(({ key }) => (comparisonFn ?? compareValues)(key, cacheEntry))
 
   const memoizedFn: MemoizeFnType<T> & MemoizeUtilsType<T> = (...args) => {
     let value: T
