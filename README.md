@@ -3,7 +3,7 @@
 ## Features include:
 
 - 100% type-safe
-- Supports functions up to 100 parameters (but more can be easily added, if ever needed)
+- Supports functions up to 30 parameters (but more can be easily added, if ever needed)
 - Adds methods for clearing the entire cache or even particular entries
 - Allows for custom parameter comparison functions (defaulting to comparing each parameter individually, using the standand `===` JS/TS strict-equals operator)
 
@@ -11,7 +11,7 @@
 
 None.
 
-### Basic usage (notice how the memoized function gets properly typed):
+### Basic usage (notice that the memoized function gets properly typed):
 
 ```ts
 const fibonacci = memoize(
@@ -20,13 +20,6 @@ const fibonacci = memoize(
   )
 )
 
-console.log(fibonacci(0))
-console.log(fibonacci(1))
-console.log(fibonacci(2))
-console.log(fibonacci(3))
-console.log(fibonacci(4))
-console.log(fibonacci(5))
-console.log(fibonacci(6))
 console.log(fibonacci(40))
 ```
 
@@ -37,29 +30,16 @@ const factorial = memoize(
   (n: number): number => (console.log(`Calculating ${n}!`), n <= 1 ? 1 : n * factorial(n - 1))
 )
 
-console.log(factorial(6))
-console.log(factorial(6))
-console.log(factorial(6))
 console.log('Current cache: ', JSON.stringify(factorial.getCache()))
-
-console.log('Clearing all...')
 factorial.clearAll()
-console.log('Cache: ', JSON.stringify(factorial.getCache()))
-
-console.log(factorial(6))
-
-console.log('Clearing entry 5...')
 factorial.clearEntry(5)
-console.log('Current cache: ', JSON.stringify(factorial.getCache()))
-console.log(factorial(5))
-console.log(factorial(5))
 ```
 
-### Specifying an optional parameter-comparison function (notice how all callback parameters get properly typed as well):
+### Specifying an optional parameter-comparison function (notice that all callback parameters get properly typed as well):
 
 ```ts
 const f = memoize(
-  (_p1: number[], _p2: string, _p3: Record<string, number>) => Math.random(),
+  (p1: number[], p2: string, p3: Record<string, number>) => Math.random(),
   ([leftP1, leftP2, leftP3], [rightP1, rightP2, rightP3]) =>
     leftP1.length === rightP1.length &&
     leftP2.toUpperCase() === rightP2.toUpperCase() &&
@@ -74,14 +54,15 @@ console.log(f([0, 1], '', { x: 2 }))
 
 ## Known limitations:
 
-- The current implementation does not support optional parameters, due to the way TypeScript's function overloading works. A possible workaround is shown below:
+- The current implementation does not support optional parameters, due to the way TypeScript's function overloading works. A simple solution is to pack all parameters either in a plain object or a tuple,
+  passed as a _single_ parameter:
 
 This will not work:
 
 ```ts
 const h = memoize(
-  (_p1: number[], _p2: string, _p3: Record<string, number>, p4 = false) => Math.random(),
-  ([leftP1, leftP2, leftP3, leftP4], [rightP1, rightP2, rightP3, rightP4]) =>
+  (p1: number[], p2: string, p3: Record<string, number>, p4 = false) => Math.random(),
+  ([leftP1, leftP2, leftP3, leftP4 = false], [rightP1, rightP2, rightP3, rightP4 = false]) =>
     leftP1.length === rightP1.length &&
     leftP2.toUpperCase() === rightP2.toUpperCase() &&
     JSON.stringify(leftP3) === JSON.stringify(rightP3) &&
@@ -89,19 +70,37 @@ const h = memoize(
 )
 ```
 
-However, with some minor changes, this will work as expected:
+However, with the suggested packing, this will work as expected:
 
 ```ts
-const p4DefaultValue = false
+// Using an object:
+
+type HParametersType = {
+  p1: number[]
+  p2: string
+  p3: Record<string, number>
+  p4?: boolean
+}
 
 const h = memoize(
-  (_p1: number[], _p2: string, _p3: Record<string, number>, p4: boolean | undefined) => (
-    (p4 ??= p4DefaultValue), Math.random()
-  ),
+  ({ p1, p2, p3, p4 = false }: HParametersType) => Math.random(),
   (
-    [leftP1, leftP2, leftP3, leftP4 = p4DefaultValue],
-    [rightP1, rightP2, rightP3, rightP4 = p4DefaultValue]
+    [{ p1: leftP1, p2: leftP2, p3: leftP3, p4: leftP4 = false }],
+    [{ p1: rightP1, p2: rightP2, p3: rightP3, p4: rightP4 = false }]
   ) =>
+    leftP1.length === rightP1.length &&
+    leftP2.toUpperCase() === rightP2.toUpperCase() &&
+    JSON.stringify(leftP3) === JSON.stringify(rightP3) &&
+    leftP4 === rightP4
+)
+
+// Or a tuple:
+
+type HParametersType = [p1: number[], p2: string, p3: Record<string, number>, p4?: boolean]
+
+const h = memoize(
+  ([p1, p2, p3, p4 = false]: HParametersType) => Math.random(),
+  ([[leftP1, leftP2, leftP3, leftP4 = false]], [[rightP1, rightP2, rightP3, rightP4 = false]]) =>
     leftP1.length === rightP1.length &&
     leftP2.toUpperCase() === rightP2.toUpperCase() &&
     JSON.stringify(leftP3) === JSON.stringify(rightP3) &&

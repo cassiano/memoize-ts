@@ -1,14 +1,14 @@
 {
   "name": "@cdandrea/memoize-ts",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "100% type-safe memoize() function written in TypeScript",
   "main": "src/memoize.js",
   "types": "src/memoize.d.ts",
   "files": [
     "LICENSE.txt",
-    "src/memoize.ts",
-    "src/memoize.js",
-    "src/memoize.d.ts"
+    "dist/memoize.js",
+    "dist/memoize.d.ts",
+    "src/memoize.ts"
   ],
   "keywords": [
     "memoization",
@@ -16,7 +16,7 @@
     "cache",
     "caching",
     "100% type-safe",
-    "supports up to 100 parameters",
+    "supports up to 30 parameters",
     "allows custom parameter comparison function",
     "allows clearing entire cache or particular entries"
   ],
@@ -46,7 +46,8 @@
   },
   "dependencies": {},
   "scripts": {
-    "test": "deno test test.ts "
+    "test": "deno test tests/test.ts",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
