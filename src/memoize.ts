@@ -132,7 +132,7 @@ export const compareValues = <T>(left: T, right: T): boolean => {
  * @returns {MemoizeFnType<T> & MemoizeUtilsType<T>} - The memoized function with additional utility methods.
  */
 
-// @ts-ignore: Temporary fix to avoid a TS warning in the overloaded signatures below, due to the use of the `comparisonFn()` optional callback.
+// @ts-expect-error: Temporary fix to avoid a TS warning in the overloaded signatures below, due to the use of the `comparisonFn()` optional callback.
 export function memoize();
 
 /* prettier-ignore */ export function memoize<T>(fn: Memoize0ParamsType<T>): Memoize0ParamsType<T> & MemoizeUtils0ParamsType<T>;
