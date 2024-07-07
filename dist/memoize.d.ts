@@ -130,6 +130,17 @@ type Memoize27ParamsType<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P
 type Memoize28ParamsType<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, P26, P27, P28> = (p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9, p10: P10, p11: P11, p12: P12, p13: P13, p14: P14, p15: P15, p16: P16, p17: P17, p18: P18, p19: P19, p20: P20, p21: P21, p22: P22, p23: P23, p24: P24, p25: P25, p26: P26, p27: P27, p28: P28) => T;
 type Memoize29ParamsType<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, P26, P27, P28, P29> = (p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9, p10: P10, p11: P11, p12: P12, p13: P13, p14: P14, p15: P15, p16: P16, p17: P17, p18: P18, p19: P19, p20: P20, p21: P21, p22: P22, p23: P23, p24: P24, p25: P25, p26: P26, p27: P27, p28: P28, p29: P29) => T;
 type Memoize30ParamsType<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, P26, P27, P28, P29, P30> = (p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9, p10: P10, p11: P11, p12: P12, p13: P13, p14: P14, p15: P15, p16: P16, p17: P17, p18: P18, p19: P19, p20: P20, p21: P21, p22: P22, p23: P23, p24: P24, p25: P25, p26: P26, p27: P27, p28: P28, p29: P29, p30: P30) => T;
+/**
+ * A function that memoizes the result of `fn` based on the actual arguments provided.
+ * It can optionally receive a custom comparison function for determining cache hits.
+ * Additional utility methods are provided, in order to manage the associated cache.
+ *
+ * @template T - The return type of the memoized function (always inferred automatically by TS).
+ * @template P1, P2, ... Pn - The types of each of the n function's arguments (always inferred automatically by TS).
+ * @param {MemoizeFnType<T>} fn - The function to be memoized.
+ * @param {comparisonFnType<T>} [comparisonFn] - An optional custom comparison function for determining cache hits based on the actual arguments passed.
+ * @returns {MemoizeFnType<T> & MemoizeUtilsType<T>} - The memoized function with additional utility methods.
+ */
 export declare function memoize(): any;
 export declare function memoize<T>(fn: Memoize0ParamsType<T>): Memoize0ParamsType<T> & MemoizeUtils0ParamsType<T>;
 export declare function memoize<T, P1>(fn: Memoize1ParamType<T, P1>, comparisonFn?: (leftArgs: [P1], rightArgs: [P1]) => boolean): Memoize1ParamType<T, P1> & MemoizeUtils1ParamType<T, P1>;

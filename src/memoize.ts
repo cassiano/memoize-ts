@@ -120,6 +120,18 @@ export const compareValues = <T>(left: T, right: T): boolean => {
 /* prettier-ignore */ type Memoize29ParamsType<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, P26, P27, P28, P29> = (p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9, p10: P10, p11: P11, p12: P12, p13: P13, p14: P14, p15: P15, p16: P16, p17: P17, p18: P18, p19: P19, p20: P20, p21: P21, p22: P22, p23: P23, p24: P24, p25: P25, p26: P26, p27: P27, p28: P28, p29: P29) => T;
 /* prettier-ignore */ type Memoize30ParamsType<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, P26, P27, P28, P29, P30> = (p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9, p10: P10, p11: P11, p12: P12, p13: P13, p14: P14, p15: P15, p16: P16, p17: P17, p18: P18, p19: P19, p20: P20, p21: P21, p22: P22, p23: P23, p24: P24, p25: P25, p26: P26, p27: P27, p28: P28, p29: P29, p30: P30) => T;
 
+/**
+ * A function that memoizes the result of `fn` based on the actual arguments provided.
+ * It can optionally receive a custom comparison function for determining cache hits.
+ * Additional utility methods are provided, in order to manage the associated cache.
+ *
+ * @template T - The return type of the memoized function (always inferred automatically by TS).
+ * @template P1, P2, ... Pn - The types of each of the n function's arguments (always inferred automatically by TS).
+ * @param {MemoizeFnType<T>} fn - The function to be memoized.
+ * @param {comparisonFnType<T>} [comparisonFn] - An optional custom comparison function for determining cache hits based on the actual arguments passed.
+ * @returns {MemoizeFnType<T> & MemoizeUtilsType<T>} - The memoized function with additional utility methods.
+ */
+
 // @ts-ignore: Temporary fix to avoid a TS warning in the overloaded signatures below, due to the use of the `comparisonFn()` optional callback.
 export function memoize()
 
@@ -157,17 +169,6 @@ export function memoize()
 // Copy generated types above this line
 // ====================================
 
-/**
- * A function that memoizes the result of `fn` based on the actual arguments provided.
- * It can optionally receive a custom comparison function for determining cache hits.
- * Additional utility methods are provided, in order to manage the associated cache.
- *
- * @template T - The return type of the memoized function (always inferred automatically by TS).
- * @template P1, P2, ... Pn - The types of each of the n function's arguments (always inferred automatically by TS).
- * @param {MemoizeFnType<T>} fn - The function to be memoized.
- * @param {comparisonFnType<T>} [comparisonFn] - An optional custom comparison function for determining cache hits based on the actual arguments passed.
- * @returns {MemoizeFnType<T> & MemoizeUtilsType<T>} - The memoized function with additional utility methods.
- */
 export function memoize<T>(
   fn: MemoizeFnType<T>,
   comparisonFn?: comparisonFnType<T>
