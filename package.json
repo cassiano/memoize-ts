@@ -1,6 +1,6 @@
 {
   "name": "@cdandrea/memoize-ts",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "100% type-safe memoize() function written in TypeScript",
   "main": "dist/memoize.js",
   "types": "dist/memoize.d.ts",
@@ -8,6 +8,7 @@
     "LICENSE.txt",
     "dist/memoize.js",
     "dist/memoize.d.ts",
+    "dist/memoize.d.ts.map",
     "src/memoize.ts"
   ],
   "keywords": [
