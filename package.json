@@ -46,11 +46,14 @@
     "yn": "^3.1.1"
   },
   "scripts": {
-    "test": "deno test tests/test.ts",
-    "build": "tsc",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "prettier-check": "prettier --check 'src/**/*.{ts,tsx}'",
-    "prettier": "prettier --write 'src/**/*.{ts,tsx}'"
+    "prettier": "prettier --write 'src/**/*.{ts,tsx}'",
+    "test": "deno test tests/test.ts",
+    "test:full": "npm run lint && npm run prettier && npm run test",
+    "build": "npm run test:full && tsc",
+    "prepublishOnly": "npm run build",
+    "publish": "npm publish"
   },
   "repository": {
     "type": "git",
