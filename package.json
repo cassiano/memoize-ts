@@ -52,7 +52,7 @@
   "scripts": {
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "prettier-check": "prettier --check 'src/**/*.{ts,tsx}'",
-    "prettier": "prettier --write 'src/**/*.{ts,tsx}'",
+    "prettier": "prettier --write --single-quote --no-semi --trailing-comma all 'src/**/*.{ts,tsx}'",
     "test": "deno test tests/test.ts",
     "test:full": "npm run lint && npm run prettier && npm run test",
     "build": "npm run test:full && tsc",

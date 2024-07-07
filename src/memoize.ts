@@ -1,55 +1,55 @@
-const DEBUG = false;
+const DEBUG = false
 
-type MemoizeCacheType<T> = { key: unknown[]; value: T }[];
+type MemoizeCacheType<T> = { key: unknown[]; value: T }[]
 
 type MemoizeUtilsCommonType<T> = {
-  clearAll: () => void;
-  getCache: () => MemoizeCacheType<T>;
-};
+  clearAll: () => void
+  getCache: () => MemoizeCacheType<T>
+}
 
-type MemoizeFnType<T> = (...args: unknown[]) => T;
+type MemoizeFnType<T> = (...args: unknown[]) => T
 
 type comparisonFnType<T> = (
   leftArgs: Parameters<MemoizeFnType<T>>,
   rightArgs: Parameters<MemoizeFnType<T>>,
-) => boolean;
+) => boolean
 
-type EmptyObjectType = Record<string | number | symbol, never>;
+type EmptyObjectType = Record<string | number | symbol, never>
 
 export const compareValues = <T>(left: T, right: T): boolean => {
-  if (left === right) return true; // Are exactly the same values?
+  if (left === right) return true // Are exactly the same values?
 
-  if (typeof left !== typeof right) return false; // Do they have different types? In general flagged by TS at compile-time, but still needed when running is JS.
+  if (typeof left !== typeof right) return false // Do they have different types? In general flagged by TS at compile-time, but still needed when running is JS.
 
   // Are both values arrays?
   if (Array.isArray(left) && Array.isArray(right)) {
-    if (left.length !== right.length) return false; // Arrays have different lengths?
+    if (left.length !== right.length) return false // Arrays have different lengths?
 
-    return left.every((leftValue, i) => compareValues(leftValue, right[i])); // Do all values match?
+    return left.every((leftValue, i) => compareValues(leftValue, right[i])) // Do all values match?
   }
 
   // Are both values objects? PS: one (and only one) of them could possibly be `null`.
-  if (typeof left === "object" && typeof right === "object") {
-    if (left === null || right === null) return false; // Is either value `null`?
+  if (typeof left === 'object' && typeof right === 'object') {
+    if (left === null || right === null) return false // Is either value `null`?
 
-    const leftKeys = Object.keys(left);
-    const rightKeys = Object.keys(right);
+    const leftKeys = Object.keys(left)
+    const rightKeys = Object.keys(right)
 
     if (
       leftKeys.length !== rightKeys.length || // Objects have different number of keys?
       !compareValues(leftKeys.sort(), rightKeys.sort()) // Or different keys (no matter their order)?
     )
-      return false;
+      return false
 
     // Do all key+value pairs match?
     return Object.entries(left).every(([leftKey, leftValue]) =>
       compareValues(leftValue, right[leftKey as keyof typeof right]),
-    );
+    )
   }
 
   // Values are not equal!
-  return false;
-};
+  return false
+}
 
 // TS types generator: https://tsplay.dev/NnY6qw
 
@@ -133,7 +133,7 @@ export const compareValues = <T>(left: T, right: T): boolean => {
  */
 
 // @ts-expect-error: Temporary fix to avoid a TS warning in the overloaded signatures below, due to the use of the `comparisonFn()` optional callback.
-export function memoize();
+export function memoize()
 
 /* prettier-ignore */ export function memoize<T>(fn: Memoize0ParamsType<T>): Memoize0ParamsType<T> & MemoizeUtils0ParamsType<T>;
 /* prettier-ignore */ export function memoize<T, P1>(fn: Memoize1ParamType<T, P1>, comparisonFn?: (leftArgs: [P1], rightArgs: [P1]) => boolean): Memoize1ParamType<T, P1> & MemoizeUtils1ParamType<T, P1>;
@@ -173,41 +173,41 @@ export function memoize<T>(
   fn: MemoizeFnType<T>,
   comparisonFn?: comparisonFnType<T>,
 ): MemoizeFnType<T> & MemoizeUtilsType<T> {
-  const cache: MemoizeCacheType<T> = [];
+  const cache: MemoizeCacheType<T> = []
 
   const findCacheIndex = (cacheEntry: unknown[]) =>
     cache.findIndex(({ key }) =>
       (comparisonFn ?? compareValues)(key, cacheEntry),
-    );
+    )
 
   const memoizedFn: MemoizeFnType<T> & MemoizeUtilsType<T> = (...args) => {
-    let value: T;
-    const index = findCacheIndex(args);
+    let value: T
+    const index = findCacheIndex(args)
 
     if (index !== -1) {
-      if (DEBUG) console.log("Retrieving memoized value for", args);
+      if (DEBUG) console.log('Retrieving memoized value for', args)
 
-      value = cache[index].value;
+      value = cache[index].value
     } else {
-      value = fn(...args);
+      value = fn(...args)
 
-      cache.unshift({ key: args, value });
+      cache.unshift({ key: args, value })
     }
 
-    return value;
-  };
+    return value
+  }
 
   memoizedFn.clearAll = () => {
-    cache.length = 0;
-  };
+    cache.length = 0
+  }
 
   memoizedFn.clearEntry = (...args: unknown[]) => {
-    const index = findCacheIndex(args);
+    const index = findCacheIndex(args)
 
-    if (index !== -1) cache.splice(index, 1);
-  };
+    if (index !== -1) cache.splice(index, 1)
+  }
 
-  memoizedFn.getCache = () => cache;
+  memoizedFn.getCache = () => cache
 
-  return memoizedFn;
+  return memoizedFn
 }
