@@ -11,7 +11,10 @@
 
 None.
 
-### Basic usage (notice that the memoized function gets properly typed):
+### Basic usage:
+
+Notice that the memoized function gets fully typed, expecting exactly the same parameters as the original function and returning
+the same type as well.
 
 ```ts
 const fibonacci = memoize(
@@ -24,7 +27,7 @@ const fibonacci = memoize(
 console.log(fibonacci(40))
 ```
 
-### New methods available for managing the internal cache:
+### Methods provided for managing the internal cache:
 
 - getCache(): returns the internal cache (currently implemented as an array), for inspection
 - clearAll(): purges the entire cache
@@ -43,15 +46,29 @@ factorial.clearAll()
 factorial.clearEntry(5)
 ```
 
-### Specifying an optional parameter-comparison function (notice that all callback parameters get properly typed as well):
+### Specifying an optional parameter-comparison function:
+
+A function callback with the following signature:
+
+```ts
+comparisonFn(leftArgs: [p1: P1, p2: P2, ... pn: Pn], rightArgs: [p1: P1, p2: P2, ... pn: Pn]) => boolean
+```
+
+can be optionally supplied. Notice how all callback parameters get properly typed, according to the original function.
 
 ```ts
 const f = memoize(
   (p1: number[], p2: string, p3: Record<string, number>) => Math.random(),
-  ([leftP1, leftP2, leftP3], [rightP1, rightP2, rightP3]) =>
-    leftP1.length === rightP1.length &&
-    leftP2.toUpperCase() === rightP2.toUpperCase() &&
-    JSON.stringify(leftP3) === JSON.stringify(rightP3),
+  (leftArgs, rightArgs) => {
+    const [leftP1, leftP2, leftP3] = leftArgs
+    const [rightP1, rightP2, rightP3] = rightArgs
+
+    return (
+      leftP1.length === rightP1.length &&
+      leftP2.toUpperCase() === rightP2.toUpperCase() &&
+      JSON.stringify(leftP3) === JSON.stringify(rightP3)
+    )
+  },
 )
 
 console.log(f([1, 2, 3], 'abc', { x: 1 }))
