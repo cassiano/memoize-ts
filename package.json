@@ -1,6 +1,6 @@
 {
   "name": "@cdandrea/memoize-ts",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "100% type-safe memoize() function written in TypeScript",
   "main": "dist/memoize.js",
   "types": "dist/memoize.d.ts",
@@ -51,7 +51,7 @@
   },
   "scripts": {
     "lint": "eslint 'src/**/*.{ts,tsx}'",
-    "prettier-check": "prettier --check 'src/**/*.{ts,tsx}'",
+    "prettier-check": "prettier --check --single-quote --no-semi --trailing-comma all 'src/**/*.{ts,tsx}'",
     "prettier": "prettier --write --single-quote --no-semi --trailing-comma all 'src/**/*.{ts,tsx}'",
     "test": "deno test tests/test.ts",
     "test:full": "npm run lint && npm run prettier && npm run test",

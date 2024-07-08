@@ -201,10 +201,13 @@ export function memoize<T>(
     cache.length = 0
   }
 
-  memoizedFn.clearEntry = (...args: unknown[]) => {
-    const index = findCacheIndex(args)
+  // This method is needed only for functions with at least 1 parameter.
+  if (fn.length > 0) {
+    memoizedFn.clearEntry = (...args: unknown[]) => {
+      const index = findCacheIndex(args)
 
-    if (index !== -1) cache.splice(index, 1)
+      if (index !== -1) cache.splice(index, 1)
+    }
   }
 
   memoizedFn.getCache = () => cache
