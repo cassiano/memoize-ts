@@ -1,12 +1,12 @@
-# 100% type-safe `memoize()` function written in TypeScript
+# 100% type-safe `memoize()` function written in TypeScript (TS)
 
 ## Features include:
 
 - 100% type-safe
 - Supports functions up to 30 parameters (but more can be easily added, if ever needed)
 - Adds methods for inspecting the cache, clearing it entirely or only particular entries
-- Allows for a custom parameter-comparison function (which defaults to compare each parameter individually
-  with the standand `===` JS's strict-equals operator, taking care of objects and arrays of any depth)
+- Allows for an optional custom parameter-comparison function, which defaults to compare each parameter individually
+  with JS's standand strict-equals operator (`===`), taking care of objects and arrays (or any combination of them) of any depth
 
 ## Pre-requisites:
 
@@ -14,7 +14,7 @@ None.
 
 ## Basic usage:
 
-Simply supply the function to be memoized as the 1st parameter of the HOF (Higher-order function) `memoize()`. Recursive
+Simply supply the function to be memoized as the 1st parameter of the HOF (Higher-Order Function) `memoize()`. Recursive
 functions are fully supported (please see example below).
 
 Notice that the memoized function returned by `memoize()` gets fully typed, keeping the original function's signature (same
@@ -44,7 +44,7 @@ can be optionally supplied as the 2nd parameter of the HOF `memoize()`, with 2 p
 - `leftArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containging all "left" arguments
 - `rightArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containging all "right" arguments
 
-(pick whatever name you like for the callback's parameters)
+(pick whatever names you like for the callback's parameters)
 
 Notice that both tuples have exactly the same types as the original function's arguments. This means the types `P1, P2, ... Pn` are
 always automatically inferred by TS.
@@ -92,9 +92,9 @@ factorial.clearEntry(5) // This method expects a `number`, just like the origina
 
 ## Known limitations:
 
-- The current implementation does not support optional parameters (with or without default values), due to the way TypeScript's
-  function overloading works. A simple solution is to pack all parameters either in a plain object or a tuple, passed as a
-  _single_ parameter:
+- The current implementation does not support optional parameters (with or without default values), due to the way TS's
+  function overloading works. A simple solution is to pack all parameters either in a plain object or a tuple, and pass them as a
+  _single_ parameter, allowing TS to infer all types (including the optional ones) correctly.
 
 This will not work:
 
