@@ -133,8 +133,6 @@ export const compareValues = <T>(left: T, right: T): boolean => {
  */
 
 // @ts-expect-error: Temporary fix to avoid a TS warning in the overloaded signatures below, due to the use of the `comparisonFn()` optional callback.
-export function memoize()
-
 /* prettier-ignore */ export function memoize<T>(fn: Memoize0ParamsType<T>): Memoize0ParamsType<T> & MemoizeUtils0ParamsType<T>;
 /* prettier-ignore */ export function memoize<T, P1>(fn: Memoize1ParamType<T, P1>, comparisonFn?: (leftArgs: [P1], rightArgs: [P1]) => boolean): Memoize1ParamType<T, P1> & MemoizeUtils1ParamType<T, P1>;
 /* prettier-ignore */ export function memoize<T, P1, P2>(fn: Memoize2ParamsType<T, P1, P2>, comparisonFn?: (leftArgs: [P1, P2], rightArgs: [P1, P2]) => boolean): Memoize2ParamsType<T, P1, P2> & MemoizeUtils2ParamsType<T, P1, P2>;

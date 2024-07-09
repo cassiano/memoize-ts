@@ -1,24 +1,32 @@
-# 100% type-safe `memoize()` function written in TypeScript (TS)
+# 100% type-safe `memoize()` function written in TS
 
-## Features include:
+> [Memoization](https://en.wikipedia.org/wiki/Memoization) is an optimization technique that makes applications and functions more efficient by storing the results of function calls in a cache and returning the cached results when the same inputs occur, instead of computing it again. This package provides a simple way to transform functions into their memoized versions, while keeping the function's signature.
+
+## Features
 
 - 100% type-safe
-- Supports functions up to 30 parameters (but more can be easily added, if ever needed)
-- Adds methods for inspecting the cache, clearing it entirely or only particular entries
-- Allows for an optional custom parameter-comparison function, which defaults to compare each parameter individually
-  with JS's standand strict-equals operator (`===`), taking care of objects and arrays (or any combination of them) of any depth
+- Supports functions that have up to 30 parameters
+- Supports recursive functions
+- Provides methods for [managing the cache](#managingCache)
+- Provides a default function for searching entries in the cache, while supporting [custom parameter-comparison functions](#customFunction)
 
-## Pre-requisites:
+## External dependencies
 
 None.
 
-## Basic usage:
+## Installation
 
-Simply supply the function to be memoized as the 1st parameter of the HOF (Higher-Order Function) `memoize()`. Recursive
-functions are fully supported (please see example below).
+Install from `npm` using your favorite package manager:
 
-Notice that the memoized function returned by `memoize()` gets fully typed, keeping the original function's signature (same
-parameters and return value), no matter the number or type of the parameters, up to the documented limit (currently 30).
+```
+npm install @cdandrea/memoize-ts
+yarn add @cdandrea/memoize-ts
+etc
+```
+
+## Usage
+
+Simply supply the function to be memoized as the 1st parameter of the `memoize()` Higher-Order Function (HOF). In the example below a recursive function that calculates the Fibonacci sequence is supplied and its memoized version is assigned to the `fibonacci` variable. The memoized function can then be used in the same way as if it were not memoized.
 
 ```ts
 const fibonacci = memoize(
@@ -31,23 +39,99 @@ const fibonacci = memoize(
 console.log(fibonacci(40))
 ```
 
-## Specifying an optional parameter-comparison function:
+Notice that the memoized function returned by `memoize()` gets fully typed, keeping the original function's signature (same parameters and return value), no matter the number or type of the parameters, up to the documented limit (currently 30).
 
-A function callback with the following signature:
+## Supporting recursive functions
+
+Notice that the following **WON'T** work as expected:
+
+```ts
+// Standard Fibonacci function, without any memoization.
+const fibonacci = (n: number): number => (
+  console.log(`Calculating fibonacci(${n})`),
+  n <= 1 ? n : fibonacci(n - 1) + fibonacci(n - 2)
+)
+
+// Now its memoized version.
+const memoFibonacci = memoize(fibonacci)
+
+// This call won't fully use memoization.
+console.log(memoFibonacci(40))
+```
+
+This is due to the fact that the 2 recursive calls to `fibonacci()` inside the standard function body will still call the original/non-memoized function, even it the 1st call was made to the memoized version, `memoFibonacci()`.
+
+So, the proper way to handle recursive functions is to define the function only once and pass it as a parameter to the `memoize()` HOF:
+
+```ts
+const fibonacci = memoize(
+  (n: number): number => (
+    console.log(`Calculating fibonacci(${n})`),
+    n <= 1 ? n : fibonacci(n - 1) + fibonacci(n - 2)
+  ),
+)
+
+console.log(fibonacci(40))
+```
+
+The following example is not so common (have you ever declared a function with `let`, not `const`?), but **WILL** work as well:
+
+```ts
+let fibonacci = (n: number): number => (
+  console.log(`Calculating fibonacci(${n})`),
+  n <= 1 ? n : fibonacci(n - 1) + fibonacci(n - 2)
+)
+
+fibonacci = memoize(fibonacci)
+
+console.log(fibonacci(40))
+```
+
+So, if you have a recursive function, normally declared with `const`, imported from some external library and wish to memoize it, **YOU ARE OUT OF LUCK**.
+
+## Optional custom parameter-comparison function<a name="customFunction"></a>
+
+The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a comparison function. The default behavior of the comparison function is to compare each parameter individually with the standand `===` JS's strict-equals operator, taking care of objects and arrays of any depth.
+
+#### All the following return `true`:
+
+```ts
+compareValues([1, 2, 3], [1, 2, 3])
+compareValues([1, '...', false], [1, '...', false])
+compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3 })
+compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2, 3] })
+```
+
+#### While these return `false`:
+
+```ts
+compareValues([1, 2, 3], [1, 2])
+compareValues([1, '...', false], [1, '...', true])
+compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 4 })
+compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2] })
+```
+
+(the good news is that the above function, `compareValues()`, is also exported from the package and can also be used in your
+project if needed, even if the use has nothing to do with `memoization` itself)
+
+However, if a different comparison behavior is necessary you can provide a custom version as the second parameter of the `memoize()` HOF, following the function callback signature below:
 
 ```ts
 comparisonFn(leftArgs: [p1: P1, p2: P2, ... pn: Pn], rightArgs: [p1: P1, p2: P2, ... pn: Pn]) => boolean
 ```
 
-can be optionally supplied as the 2nd parameter of the HOF `memoize()`, with 2 parameters:
-
 - `leftArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containging all "left" arguments
 - `rightArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containging all "right" arguments
 
-(pick whatever names you like for the callback's parameters)
+Obs: Choose whatever names you like for the callback's parameters.
 
-Notice that both tuples have exactly the same types as the original function's arguments. This means the types `P1, P2, ... Pn` are
-always automatically inferred by TS.
+Notice that both tuples have exactly the same types as the original function's arguments. This means the types `P1, P2, ... Pn` are always automatically inferred by TS.
+
+The example below provides a custom comparison function that:
+
+- for the 1st parameters, `leftP1` and `rightP1`, of type `number[]`, consider only their size, ignoring their contents
+- for the 2nd ones, `leftP2` and `rightP2`, of type `string`, ignore their case completely, so 'abc' is the same as 'ABC'
+- for the 3rd ones, `leftP3` and `rightP3`, of type `Record<string, number>`, consider their JSON representation, taking care of the fact that in JS/TS `{ x: 1 } !== { x: 1 }`
 
 ```ts
 const f = memoize(
@@ -70,13 +154,15 @@ console.log(f([1, 3, 5], 'aBc', { x: 1 })) // Another "cache hit".
 console.log(f([0, 1], '', { x: 2 })) // Creates a new (second) cache entry.
 ```
 
-## Methods provided for managing the internal cache:
+## Managing the internal cache<a name="managingCache"></a>
 
-- `getCache()`: returns the internal cache (currently implemented as an array), used primarily for inspection/debugging purposes
-- `clearAll()`: purges the entire cache
-- `clearEntry(p1: P1, p2: P2, ... pn: Pn)`: purges an specific entry, based on the arguments `p1, p2, ... pn`, applied to the
-  supplied custom parameter-comparison function, if any, or the default one. As usual, the types `P1, P2, ... Pn` are always
-  automatically inferred by TS.
+You can inspect and clear the cache using the follow methods:
+
+- `getCache()`: returns the internal cache (currently implemented as an array), used primarily for inspection/debugging purposes.
+- `clearAll()`: purges the entire cache.
+- `clearEntry(p1: P1, p2: P2, ... pn: Pn)`: purges an specific entry, based on the arguments `p1, p2, ... pn`, applied to the supplied custom parameter-comparison function, if any, or the default one. As usual, the types `P1, P2, ... Pn` are always automatically inferred by TS.
+
+The example below makes use of these methods:
 
 ```ts
 const factorial = memoize(
@@ -90,13 +176,12 @@ factorial.clearAll()
 factorial.clearEntry(5) // This method expects a `number`, just like the original `factorial` function.
 ```
 
-## Known limitations:
+## Optional parameters
 
-- The current implementation does not support optional parameters (with or without default values), due to the way TS's
-  function overloading works. A simple solution is to pack all parameters either in a plain object or a tuple, and pass them as a
-  _single_ parameter, allowing TS to infer all types (including the optional ones) correctly.
+- The current implementation does not support optional parameters (with or without default values), due to the way TS's function overloading works. A simple solution is to pack all parameters either in a plain object or a tuple, and pass them as a
+  **single** parameter, allowing TS to infer all types (including the optional ones) correctly.
 
-This will not work:
+This **WON'T** work:
 
 ```ts
 const h = memoize(
@@ -113,11 +198,11 @@ const h = memoize(
 )
 ```
 
-However, with the suggested packing, this will work as expected:
+However, with the suggested packing, this **WILL** work as expected:
+
+#### Using an object:
 
 ```ts
-// Using an object:
-
 type HParametersPackedAsObjectType = {
   p1: number[]
   p2: string
@@ -136,9 +221,11 @@ const h = memoize(
     JSON.stringify(leftP3) === JSON.stringify(rightP3) &&
     leftP4 === rightP4,
 )
+```
 
-// Or a tuple:
+#### Or a tuple:
 
+```ts
 type HParametersPackedAsTupleType = [
   p1: number[],
   p2: string,
