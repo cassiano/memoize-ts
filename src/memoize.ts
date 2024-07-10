@@ -17,7 +17,8 @@ type comparisonFnType<T> = (
 type EmptyObjectType = Record<string | number | symbol, never>
 
 /**
- * A function that compares two values.
+ * A function that compares two values. Its default behavior is to compare each parameter individually with the standand
+ * `===` JS's strict-equals operator, taking care of objects and arrays of any depth.
  *
  * @template T - The values type
  * @param {T} left - The left value.

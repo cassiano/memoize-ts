@@ -87,7 +87,7 @@ fibonacci = memoize(fibonacci)
 console.log(fibonacci(40))
 ```
 
-So, if you have a recursive function, normally declared with `const`, imported from some external library and wish to memoize it, **YOU ARE OUT OF LUCK**.
+So, if you have a recursive function imported from some external library, normally declared with `const`, and wish to memoize it, **YOU ARE OUT OF LUCK**.
 
 ## Optional custom parameter-comparison function<a name="customFunction"></a>
 
