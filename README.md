@@ -1,6 +1,6 @@
 # 100% type-safe `memoize()` function written in TS
 
-> [Memoization](https://en.wikipedia.org/wiki/Memoization) is an optimization technique that makes applications and functions more efficient by storing the results of function calls in a cache and returning the cached results when the same inputs occur, instead of computing it again. This package provides a simple way to transform functions into their memoized versions, while keeping the function's signature.
+> [Memoization](https://en.wikipedia.org/wiki/Memoization) is an optimization technique that makes applications and functions more efficient by storing the results of function calls in a cache and returning the cached results when the same inputs occur, instead of computing it again. This package provides a simple way to transform functions into their memoized versions using a Higher-Order Function (HOF) called "memoize()", while keeping the original function's signature.
 
 ## Features
 
@@ -29,7 +29,7 @@ pnpm install @cdandrea/memoize-ts
 
 ## Usage
 
-Simply supply the function to be memoized as the 1st parameter of the `memoize()` Higher-Order Function (HOF). In the example below a recursive function that calculates the Fibonacci sequence is supplied and its memoized version is assigned to the `fibonacci` variable. The memoized function can then be used in the same way as if it were not memoized.
+Simply supply the function to be memoized as the 1st parameter of the `memoize()` HOF. In the example below a recursive function that calculates the Fibonacci sequence is supplied and its memoized version is assigned to the `fibonacci` variable. The memoized function can then be used in the same way as if it were not memoized.
 
 ```ts
 const fibonacci = memoize(
@@ -96,7 +96,7 @@ So, if you have a recursive function imported from some external library, normal
 
 The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a comparison function. The default behavior of the comparison function is to compare each parameter individually with the standand `===` JS's strict-equals operator, taking care of objects and arrays of any depth.
 
-#### All the following return `true`:
+##### All the following return `true`:
 
 ```ts
 compareValues([1, 2, 3], [1, 2, 3])
@@ -105,7 +105,7 @@ compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3 })
 compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2, 3] })
 ```
 
-#### While these return `false`:
+##### While these return `false`:
 
 ```ts
 compareValues([1, 2, 3], [1, 2])
@@ -133,8 +133,8 @@ Notice that both tuples have exactly the same types as the original function's a
 The example below provides a custom comparison function that:
 
 - for the 1st parameters, `leftP1` and `rightP1`, of type `number[]`, considers only their size, ignoring their contents
-- for the 2nd ones, `leftP2` and `rightP2`, of type `string`, ignores their case completely, so 'abc' is the same as 'ABC'
-- for the 3rd ones, `leftP3` and `rightP3`, of type `Record<string, number>`, considers their JSON representation, taking care of the fact that in JS/TS `{ x: 1 } !== { x: 1 }`
+- for the 2nd ones, `leftP2` and `rightP2`, of type `string`, ignores their case, so 'abc' is equivalent to 'ABC'
+- for the 3rd ones, `leftP3` and `rightP3`, of type `Record<string, number>`, considers their JSON (string) representation, taking care of the fact that in JS/TS `{ x: 1 } === { x: 1 }` generally returns `false`
 
 ```ts
 const f = memoize(
@@ -203,7 +203,7 @@ const h = memoize(
 
 However, with the suggested packing, this **WILL** work as expected:
 
-#### Using an object:
+##### Using an object:
 
 ```ts
 type HParametersPackedAsObjectType = {
@@ -226,7 +226,7 @@ const h = memoize(
 )
 ```
 
-#### Or a tuple:
+##### Or a tuple:
 
 ```ts
 type HParametersPackedAsTupleType = [
