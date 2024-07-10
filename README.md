@@ -15,9 +15,17 @@
 
 Install from `npm` using your favorite package manager:
 
-`npm install @cdandrea/memoize-ts`
-`yarn add @cdandrea/memoize-ts`
-`pnpm install @cdandrea/memoize-ts`
+```
+npm install @cdandrea/memoize-ts
+```
+
+```
+yarn add @cdandrea/memoize-ts
+```
+
+```
+pnpm install @cdandrea/memoize-ts
+```
 
 ## Usage
 
