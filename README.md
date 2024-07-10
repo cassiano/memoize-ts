@@ -90,7 +90,7 @@ fibonacci = memoize(fibonacci)
 console.log(fibonacci(40))
 ```
 
-So, if you have a recursive function imported from some external library, normally declared with `const`, and wish to memoize it, unfortunately it won't be possible with this package.
+So, if you have a recursive function imported from some external library, normally declared with `const`, and wish to memoize it, I must say that **you are out of luck, pal** 🤣🤣🤣.
 
 ## Optional custom parameter-comparison function<a name="customFunction"></a>
 
