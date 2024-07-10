@@ -96,7 +96,7 @@ So, if you have a recursive function imported from some external library, normal
 
 The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a comparison function. The default behavior of the comparison function is to compare each parameter individually with the standand `===` JS's strict-equals operator, taking care of objects and arrays of any depth.
 
-##### All the following return `true`:
+All the following return `true`:
 
 ```ts
 compareValues([1, 2, 3], [1, 2, 3])
@@ -105,13 +105,13 @@ compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3 })
 compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2, 3] })
 ```
 
-##### While these return `false`:
+While these return `false`:
 
 ```ts
-compareValues([1, 2, 3], [1, 2])
-compareValues([1, '...', false], [1, '...', true])
-compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 4 })
-compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2] })
+compareValues([1, 2, 3], [1, 2]) // 3 is missing in right argument
+compareValues([1, '...', false], [1, '...', true]) // false !== true in 3rd position
+compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 4 }) // 3 !== 4 in z's value
+compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2] }) // 3 is missing in z's value of right argument
 ```
 
 (the good news is that the above function, `compareValues()`, is also exported from the package and can also be used in your
@@ -201,9 +201,9 @@ const h = memoize(
 )
 ```
 
-However, with the suggested packing, this **WILL** work as expected:
+However, with the suggested packing, this **WILL** work as expected.
 
-##### Using an object:
+Using an object:
 
 ```ts
 type HParametersPackedAsObjectType = {
@@ -226,7 +226,7 @@ const h = memoize(
 )
 ```
 
-##### Or a tuple:
+Or a tuple:
 
 ```ts
 type HParametersPackedAsTupleType = [
