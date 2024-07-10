@@ -77,7 +77,7 @@ const fibonacci = memoize(
 console.log(fibonacci(40))
 ```
 
-The following example is not so common (have you ever declared a function with `let`, not `const`?), but **WILL** work as well:
+The following example is very uncommon (have you ever declared a function with `let`, not `const`?), but works perfectly well:
 
 ```ts
 let fibonacci = (n: number): number => (
@@ -90,7 +90,7 @@ fibonacci = memoize(fibonacci)
 console.log(fibonacci(40))
 ```
 
-So, if you have a recursive function imported from some external library, normally declared with `const`, and wish to memoize it, I must say that **you are out of luck, pal** 🤣🤣🤣.
+So, if you happen to have a recursive function imported from some external library, normally declared with `const`, and wish to memoize it, I must say that **you are out of luck, pal** 🤣🤣🤣.
 
 ## Optional custom parameter-comparison function<a name="customFunction"></a>
 
@@ -115,7 +115,7 @@ compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2] }) // 3 is m
 ```
 
 (the good news is that the above function, `compareValues()`, is also exported from the package and can also be used in your
-project if needed, even if the use has nothing to do with `memoization` itself)
+project if needed, even if the use has nothing to do with memoization itself)
 
 However, if a different comparison behavior is necessary you can provide a custom version as the second parameter of the `memoize()` HOF, following the function callback signature below:
 
@@ -126,7 +126,7 @@ comparisonFn(leftArgs: [p1: P1, p2: P2, ... pn: Pn], rightArgs: [p1: P1, p2: P2,
 - `leftArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containing all "left" arguments
 - `rightArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containing all "right" arguments
 
-Obs: Choose whatever names you like for the callback's parameters.
+PS: Choose whatever names you like for the callback's parameters.
 
 Notice that both tuples have exactly the same types as the original function's arguments. This means the types `P1, P2, ... Pn` are always automatically inferred by TS.
 
@@ -181,8 +181,7 @@ factorial.clearEntry(5) // This method expects a `number`, just like the origina
 
 ## Optional parameters
 
-- The current implementation does not support optional parameters (with or without default values), due to the way TS's function overloading works. A simple solution is to pack all parameters either in a plain object or a tuple, and pass them as a
-  **single** parameter, allowing TS to infer all types (including the optional ones) correctly.
+- The current implementation does not support optional parameters (with or without default values), due to the way TS's function overloading works. A simple solution is to pack all parameters either in a plain object or a tuple, and pass them as a **single** parameter, allowing TS to infer all types (including the optional ones) correctly.
 
 This **WON'T** work:
 
