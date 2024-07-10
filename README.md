@@ -120,8 +120,8 @@ However, if a different comparison behavior is necessary you can provide a custo
 comparisonFn(leftArgs: [p1: P1, p2: P2, ... pn: Pn], rightArgs: [p1: P1, p2: P2, ... pn: Pn]) => boolean
 ```
 
-- `leftArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containging all "left" arguments
-- `rightArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containging all "right" arguments
+- `leftArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containing all "left" arguments
+- `rightArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containing all "right" arguments
 
 Obs: Choose whatever names you like for the callback's parameters.
 

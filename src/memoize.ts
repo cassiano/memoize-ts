@@ -16,6 +16,15 @@ type comparisonFnType<T> = (
 
 type EmptyObjectType = Record<string | number | symbol, never>
 
+/**
+ * A function that compares two values.
+ *
+ * @template T - The values type
+ * @param {T} left - The left value.
+ * @param {T} right - The right value.
+ * @returns {boolean} - Whether the 2 values are considered equal
+ */
+
 export const compareValues = <T>(left: T, right: T): boolean => {
   if (left === right) return true // Are exactly the same values?
 
