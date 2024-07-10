@@ -250,8 +250,8 @@ const h = memoize(
 
 ## 🙌 Credits
 
-This library was inspired in ideas from these relevant contributors:
+This library was inspired by ideas from these relevant contributors:
 
-- [Rahul M. Juliato](https://github.com/LionyxML): provided essential information on how to publish npm packages; also suggested the implementation of cache management methods
+- [Rahul M. Juliato](https://github.com/LionyxML): provided essential information on how to publish npm packages and integrate with VS Code; also suggested the implementation of cache management methods
 - [Rodrigo Navarro](https://github.com/reu): suggested the inclusion of a custom parameter-comparison function, allowing for greater flexibility in the library; also suggested the use of the TS's function overloading mechanism in order to achieve proper function signature inference
 - [Amanda F. Iaquinta](https://github.com/AmandaFI): helped to improve the documentation with valuable suggestions and additions
