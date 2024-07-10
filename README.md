@@ -9,20 +9,15 @@
 - Supports recursive functions
 - Provides methods for [managing the cache](#managingCache)
 - Provides a default function for searching entries in the cache, while supporting [custom parameter-comparison functions](#customFunction)
-
-## External dependencies
-
-None.
+- No external dependencies
 
 ## Installation
 
 Install from `npm` using your favorite package manager:
 
-```
-npm install @cdandrea/memoize-ts
-yarn add @cdandrea/memoize-ts
-etc
-```
+`npm install @cdandrea/memoize-ts`
+`yarn add @cdandrea/memoize-ts`
+`pnpm install @cdandrea/memoize-ts`
 
 ## Usage
 
@@ -87,7 +82,7 @@ fibonacci = memoize(fibonacci)
 console.log(fibonacci(40))
 ```
 
-So, if you have a recursive function imported from some external library, normally declared with `const`, and wish to memoize it, **YOU ARE OUT OF LUCK**.
+So, if you have a recursive function imported from some external library, normally declared with `const`, and wish to memoize it, unfortunately it won't be possible with this package.
 
 ## Optional custom parameter-comparison function<a name="customFunction"></a>
 
