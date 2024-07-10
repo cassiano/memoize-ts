@@ -129,9 +129,9 @@ Notice that both tuples have exactly the same types as the original function's a
 
 The example below provides a custom comparison function that:
 
-- for the 1st parameters, `leftP1` and `rightP1`, of type `number[]`, consider only their size, ignoring their contents
-- for the 2nd ones, `leftP2` and `rightP2`, of type `string`, ignore their case completely, so 'abc' is the same as 'ABC'
-- for the 3rd ones, `leftP3` and `rightP3`, of type `Record<string, number>`, consider their JSON representation, taking care of the fact that in JS/TS `{ x: 1 } !== { x: 1 }`
+- for the 1st parameters, `leftP1` and `rightP1`, of type `number[]`, considers only their size, ignoring their contents
+- for the 2nd ones, `leftP2` and `rightP2`, of type `string`, ignores their case completely, so 'abc' is the same as 'ABC'
+- for the 3rd ones, `leftP3` and `rightP3`, of type `Record<string, number>`, considers their JSON representation, taking care of the fact that in JS/TS `{ x: 1 } !== { x: 1 }`
 
 ```ts
 const f = memoize(
@@ -156,7 +156,7 @@ console.log(f([0, 1], '', { x: 2 })) // Creates a new (second) cache entry.
 
 ## Managing the internal cache<a name="managingCache"></a>
 
-You can inspect and clear the cache using the follow methods:
+You can inspect and clear the cache using the following methods:
 
 - `getCache()`: returns the internal cache (currently implemented as an array), used primarily for inspection/debugging purposes.
 - `clearAll()`: purges the entire cache.
