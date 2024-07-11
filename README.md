@@ -1,12 +1,12 @@
 # 100% type-safe `memoize()` function written in TS
 
-> [Memoization](https://en.wikipedia.org/wiki/Memoization) is an optimization technique that makes applications and functions more efficient by storing the results of function calls in a cache and returning the cached results when the same inputs occur, instead of computing it again. This package provides a simple way to transform functions into their memoized versions using a Higher-Order Function (HOF) called "memoize()", while keeping the original function's signature.
+> [Memoization](https://en.wikipedia.org/wiki/Memoization) is an optimization technique that makes applications and functions more efficient by storing the results of function calls in a cache and returning the cached results when the same inputs occur, instead of computing it again. This package provides a simple way to transform [pure functions](https://en.wikipedia.org/wiki/Pure_function) into their memoized versions using a [Higher-Order Function](https://en.wikipedia.org/wiki/Higher-order_function) (HOF) called "memoize()", while keeping the original function's signature.
 
 ## Features
 
 - 100% type-safe
 - Supports functions that have up to 30 parameters
-- Supports recursive functions
+- Supports [recursive functions](#recursiveFunctions)
 - Provides methods for [managing the cache](#managingCache)
 - Provides a default function for searching entries in the cache, while supporting [custom parameter-comparison functions](#customFunction)
 - No external dependencies
@@ -44,7 +44,7 @@ console.log(fibonacci(40))
 
 Notice that the memoized function returned by `memoize()` gets fully typed, keeping the original function's signature (same parameters and return value), no matter the number or type of the parameters, up to the documented limit (currently 30).
 
-## Supporting recursive functions
+## Supporting recursive functions<a name="recursiveFunctions"></a>
 
 Notice that the following **WON'T** work as expected:
 
