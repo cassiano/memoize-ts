@@ -8,7 +8,7 @@
 - Supports functions that have up to 30 parameters
 - Supports [recursive functions](#recursiveFunctions)
 - Provides methods for [managing the internal cache](#managingCache)
-- Provides a default function for searching entries in the cache, while supporting [custom parameter-comparison functions](#customFunction)
+- Provides a default function for searching entries in the cache, while supporting a [custom parameter-comparison function](#customFunction)
 - No external dependencies
 
 ## Installation
