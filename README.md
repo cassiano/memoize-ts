@@ -96,7 +96,7 @@ So, if you happen to have a recursive function imported from some external libra
 
 The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a comparison function. The default behavior of the comparison function is to compare each parameter individually with the standand `===` JS/TS's strict-equals operator, taking care of **objects**, **maps** and **arrays** of any depth. **Classes** (in fact, class instances) are covered, too.
 
-Beware that cyclical (i.e. recursive, auto-referenced) data structures are not supported, yet. But will be at any time soon.
+Beware that cyclical data structures are not supported, yet. But will be at any time soon.
 
 All the following return `true`:
 
