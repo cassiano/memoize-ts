@@ -6,9 +6,9 @@
 
 - 100% type-safe
 - Supports functions that have up to 30 parameters
-- Supports [recursive functions](#recursiveFunctions)
-- Provides methods for [managing the internal cache](#managingCache)
-- Provides a default function for searching entries in the cache, while supporting a [custom parameter-comparison function](#customFunction)
+- Supports [recursive functions](#supporting-recursive-functions)
+- Provides methods for managing the [internal cache](#managing-the-internal-cache)
+- Provides a default function for searching entries in the cache, while supporting a [custom parameter-comparison function](#optional-custom-parameter-comparison-function)
 - No external dependencies
 
 ## Installation
@@ -44,7 +44,7 @@ console.log(fibonacci(40))
 
 Notice that the memoized function returned by `memoize()` gets fully typed, keeping the original function's signature (same parameters and return value), no matter the number or type of the parameters, up to the documented limit (currently 30).
 
-## Supporting recursive functions<a name="recursiveFunctions"></a>
+## Supporting recursive functions
 
 Notice that the following **WON'T** work as expected:
 
@@ -92,7 +92,7 @@ console.log(fibonacci(40))
 
 So, if you happen to have a recursive function imported from some external library, normally declared with `const`, and wish to memoize it, I must say that **you are out of luck, pal** 🤣🤣🤣.
 
-## Optional custom parameter-comparison function<a name="customFunction"></a>
+## Optional custom parameter-comparison function
 
 The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a comparison function. The default behavior of the comparison function is to compare each parameter individually with the standand `===` JS/TS's strict-equals operator, taking care of **objects**, **maps** and **arrays** of any depth. **Classes** (in fact, class instances) are covered, too.
 
@@ -207,7 +207,7 @@ console.log(f([1, 3, 5], 'aBc', { x: 1 })) // Another "cache hit".
 console.log(f([0, 1], '', { x: 2 })) // Creates a new (second) cache entry.
 ```
 
-## Managing the internal cache<a name="managingCache"></a>
+## Managing the internal cache
 
 You can inspect and clear the cache using the following methods:
 
