@@ -94,47 +94,97 @@ So, if you happen to have a recursive function imported from some external libra
 
 ## Optional custom parameter-comparison function<a name="customFunction"></a>
 
-The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a comparison function. The default behavior of the comparison function is to compare each parameter individually with the standand `===` JS's strict-equals operator, taking care of objects and arrays of any depth.
+The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a comparison function. The default behavior of the comparison function is to compare each parameter individually with the standand `===` JS/TS's strict-equals operator, taking care of **objects**, **maps** and **arrays** of any depth. **Classes** (in fact, class instances) are covered, too.
+
+Beware that cyclical (i.e. recursive, auto-referenced) data structures are not supported, yet. But will be at any time soon.
 
 All the following return `true`:
 
 ```ts
 compareValues([1, 2, 3], [1, 2, 3])
-compareValues([1, '...', false], [1, '...', false])
+
+compareValues(
+  [1, 'abc', false, undefined, null],
+  [1, 'abc', false, undefined, null],
+)
+
 compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3 })
+
+// Object's order doesn't matter.
+compareValues({ x: 1, y: 2, z: 3 }, { y: 2, z: 3, x: 1 })
+
 compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2, 3] })
+
+compareValues(
+  new Map([
+    ['x', 1],
+    ['y', 2],
+    ['z', 3],
+  ]),
+  new Map([
+    ['x', 1],
+    ['y', 2],
+    ['z', 3],
+  ]),
+)
 ```
 
 While these return `false`:
 
 ```ts
-compareValues([1, 2, 3], [1, 2]) // 3 is missing in right argument
-compareValues([1, '...', false], [1, '...', true]) // false !== true in 3rd position
-compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 4 }) // 3 !== 4 in z's value
-compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2] }) // 3 is missing in z's value of right argument
+// Right array is shorter than the left one.
+compareValues([1, 2, 3], [1, 2])
+
+// false ≠ true in 3rd position.
+compareValues([1, 'abc', false], [1, 'abc', true])
+
+// 3 ≠ 4 in z's value.
+compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 4 })
+
+// Right object has more keys than the left one.
+compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3, w: 4 })
+
+// Right object has less keys than the left one.
+compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2 })
+
+// Right object z's value is longer than left's one.
+compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2, 3, 4] })
+
+// Different maps order.
+compareValues(
+  new Map([
+    ['x', 1],
+    ['y', 2],
+    ['z', 3],
+  ]),
+  new Map([
+    ['y', 2],
+    ['z', 3],
+    ['x', 1],
+  ]),
+)
 ```
 
-(the good news is that the above function, `compareValues()`, is also exported from the package and can also be used in your
-project if needed, even if the use has nothing to do with memoization itself)
+The good news is that the above function, `compareValues()`, is also exported from the package and can also be used in your project if needed, even if the use has nothing to do with memoization itself.
 
 However, if a different comparison behavior is necessary you can provide a custom version as the second parameter of the `memoize()` HOF, following the function callback signature below:
 
 ```ts
-comparisonFn(leftArgs: [p1: P1, p2: P2, ... pn: Pn], rightArgs: [p1: P1, p2: P2, ... pn: Pn]) => boolean
+comparisonFn(leftArgs: [p1: P1, p2: P2, … pn: Pn], rightArgs: [p1: P1, p2: P2, … pn: Pn]) => boolean
 ```
 
-- `leftArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containing all "left" arguments
-- `rightArgs: [p1: P1, p2: P2, ... pn: Pn]`: tuple containing all "right" arguments
+- `leftArgs: [p1: P1, p2: P2, … pn: Pn]`: tuple containing all "left" arguments
+- `rightArgs: [p1: P1, p2: P2, … pn: Pn]`: tuple containing all "right" arguments
 
 PS: Choose whatever names you like for the callback's parameters.
 
-Notice that both tuples have exactly the same types as the original function's arguments. This means the types `P1, P2, ... Pn` are always automatically inferred by TS.
+Notice that both tuples have exactly the same types as the original function's arguments. This means the types `P1, P2, … Pn` are always automatically inferred by TS.
 
 The example below provides a custom comparison function that:
 
 - for the 1st parameters, `leftP1` and `rightP1`, of type `number[]`, considers only their size, ignoring their contents
 - for the 2nd ones, `leftP2` and `rightP2`, of type `string`, ignores their case, so 'abc' is equivalent to 'ABC'
-- for the 3rd ones, `leftP3` and `rightP3`, of type `Record<string, number>`, considers their JSON (string) representation, taking care of the fact that in JS/TS `{ x: 1 } === { x: 1 }` generally returns `false`
+- for the 3rd ones, `leftP3` and `rightP3`, of type `Record<string, number>`, considers their JSON (string) representation, taking care of the fact that in JS/TS `{ x: 1 } ≠ { x: 1 }`
 
 ```ts
 const f = memoize(
@@ -163,7 +213,7 @@ You can inspect and clear the cache using the following methods:
 
 - `getCache()`: returns the internal cache (currently implemented as an array), used primarily for inspection/debugging purposes.
 - `clearAll()`: purges the entire cache.
-- `clearEntry(p1: P1, p2: P2, ... pn: Pn)`: purges an specific entry, based on the arguments `p1, p2, ... pn`, applied to the supplied custom parameter-comparison function, if any, or the default one. As usual, the types `P1, P2, ... Pn` are always automatically inferred by TS.
+- `clearEntry(p1: P1, p2: P2, … pn: Pn)`: purges an specific entry, based on the arguments `p1, p2, … pn`, applied to the supplied custom parameter-comparison function, if any, or the default one. As usual, the types `P1, P2, … Pn` are always automatically inferred by TS.
 
 The example below makes use of these methods:
 
@@ -175,8 +225,11 @@ const factorial = memoize(
 )
 
 console.log('Current cache: ', JSON.stringify(factorial.getCache()))
+
 factorial.clearAll()
-factorial.clearEntry(5) // This method expects a `number`, just like the original `factorial` function.
+
+// This method expects a `number`, just like the original `factorial()` function.
+factorial.clearEntry(5)
 ```
 
 ## Optional parameters

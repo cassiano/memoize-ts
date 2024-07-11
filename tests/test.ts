@@ -5,30 +5,46 @@ import {
 import { memoize, compareValues } from '../src/memoize.ts'
 
 Deno.test('Comparing values', () => {
-  // `undefined` and `null` combined.
+  /////////////////////////////////////
+  // `undefined` and `null` combined //
+  /////////////////////////////////////
+
   assertEquals(compareValues(undefined, undefined), true)
   assertEquals(compareValues(undefined, null), false)
   assertEquals(compareValues(null, undefined), false)
   assertEquals(compareValues(null, null), true)
 
-  // `undefined` compared to other types.
+  /////////////////////////////////////////
+  // `undefined` compared to other types //
+  /////////////////////////////////////////
+
   assertEquals(compareValues(undefined, 1), false)
-  assertEquals(compareValues(undefined, '...'), false)
+  assertEquals(compareValues(undefined, 'abc'), false)
   assertEquals(compareValues(undefined, true), false)
   assertEquals(compareValues(undefined, []), false)
   assertEquals(compareValues(undefined, {}), false)
 
-  // `null` compared to other types.
+  ////////////////////////////////////
+  // `null` compared to other types //
+  ////////////////////////////////////
+
   assertEquals(compareValues(null, 1), false)
-  assertEquals(compareValues(null, '...'), false)
+  assertEquals(compareValues(null, 'abc'), false)
   assertEquals(compareValues(null, true), false)
   assertEquals(compareValues(null, []), false)
   assertEquals(compareValues(null, {}), false)
 
-  // Different types. No need for this test, since it is flagged by TS at compile-time.
+  /////////////////////
+  // Different types //
+  /////////////////////
+
+  // No need for this test, since it is flagged by TS at compile-time.
   // assertEquals(valuesEqual(1, '1'), false)
 
-  // Arrays.
+  ////////////
+  // Arrays //
+  ////////////
+
   assertEquals(compareValues([], []), true)
   assertEquals(compareValues([1], [1]), true)
   assertEquals(compareValues([1, 2], [1, 2]), true)
@@ -40,9 +56,12 @@ Deno.test('Comparing values', () => {
   assertEquals(compareValues([1, 2, 3], [1, 2]), false) // `left` having more elements than `right`.
   assertEquals(compareValues([1, 2, 3], [1, 2, 3, 4]), false) // `left` having less elements than `right`.
 
-  // Objects.
+  /////////////
+  // Objects //
+  /////////////
+
   assertEquals(compareValues({}, {}), true)
-  assertEquals(compareValues({ x: 1 }, { x: 1 }), true)
+  assertEquals(compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3 }), true)
   assertEquals(compareValues({ x: 1, y: 2, z: 3 }, { z: 3, x: 1, y: 2 }), true) // Different order.
   assertEquals(compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2 }), false) // `left` having more key+value pairs than `right`.
   assertEquals(
@@ -57,13 +76,19 @@ Deno.test('Comparing values', () => {
     true,
   )
 
-  // Objects with array elements.
+  /////////////////////////////////
+  // Objects with array elements //
+  /////////////////////////////////
+
   assertEquals(
     compareValues({ x: [1, 2, 3], y: 4 }, { x: [1, 2, 3], y: 4 }),
     true,
   )
 
-  // Arrays with object elements.
+  /////////////////////////////////
+  // Arrays with object elements //
+  /////////////////////////////////
+
   assertEquals(
     compareValues(
       [1, 2, { x: [3, 4, 5], y: 6 }],
@@ -72,17 +97,111 @@ Deno.test('Comparing values', () => {
     true,
   )
 
-  // Arrays x objects with sequencial integer (natural, ≥ 0) indexes.
+  /////////////////////////////////////////////////////////////////////
+  // Arrays x objects with sequencial integer (natural, ≥ 0) indexes //
+  /////////////////////////////////////////////////////////////////////
+
   assertEquals(
     compareValues([10, 20, 30, 40, 50], { 0: 10, 1: 20, 2: 30, 3: 40, 4: 50 }),
     true,
   )
+
+  // Different key order.
   assertEquals(
     compareValues([10, 20, 30, 40, 50], { 4: 50, 3: 40, 2: 30, 1: 20, 0: 10 }),
     true,
-  ) // Different key order.
+  )
 
-  // Classes.
+  //////////
+  // Maps //
+  //////////
+
+  assertEquals(compareValues(new Map(), new Map()), true)
+
+  assertEquals(
+    compareValues(
+      new Map([
+        ['x', 1],
+        ['y', 2],
+        ['z', 3],
+      ]),
+      new Map([
+        ['x', 1],
+        ['y', 2],
+        ['z', 3],
+      ]),
+    ),
+    true,
+  )
+
+  // Different order.
+  assertEquals(
+    compareValues(
+      new Map([
+        ['x', 1],
+        ['y', 2],
+        ['z', 3],
+      ]),
+      new Map([
+        ['x', 1],
+        ['z', 3],
+        ['y', 2],
+      ]),
+    ),
+    false,
+  )
+
+  // `left` having more key+value pairs than `right`.
+  assertEquals(
+    compareValues(
+      new Map([
+        ['x', 1],
+        ['y', 2],
+        ['z', 3],
+      ]),
+      new Map([
+        ['x', 1],
+        ['y', 2],
+      ]),
+    ),
+    false,
+  )
+
+  // `left` having less key+value pairs than `right`.
+  assertEquals(
+    compareValues(
+      new Map([
+        ['x', 1],
+        ['y', 2],
+      ]),
+      new Map([
+        ['x', 1],
+        ['y', 2],
+        ['z', 3],
+      ]),
+    ),
+    false,
+  )
+
+  assertEquals(
+    compareValues(
+      new Map<string, number | [1, 2, 3, [4, [5, [6]]]]>([
+        ['x', 1],
+        ['y', 2],
+        ['z', [1, 2, 3, [4, [5, [6]]]]],
+      ]),
+      new Map<string, number | [1, 2, 3, [4, [5, [6]]]]>([
+        ['x', 1],
+        ['y', 2],
+        ['z', [1, 2, 3, [4, [5, [6]]]]],
+      ]),
+    ),
+    true,
+  )
+
+  /////////////
+  // Classes //
+  /////////////
 
   class C {
     constructor(public a: number, public b: string) {}
@@ -92,11 +211,11 @@ Deno.test('Comparing values', () => {
     constructor(public c: C, public d: boolean[]) {}
   }
 
-  const d1 = new D(new C(1, '...'), [true, false, true])
-  const d2 = new D(new C(1, '...'), [true, false, true])
-  const d3 = new D(new C(1, '...'), [false, true, false])
-  const d4 = new D(new C(2, '...'), [true, false, true])
-  const d5 = new D(new C(1, '.'), [true, false, true])
+  const d1 = new D(new C(1, 'abc'), [true, false, true])
+  const d2 = new D(new C(1, 'abc'), [true, false, true])
+  const d3 = new D(new C(1, 'abc'), [false, true, false])
+  const d4 = new D(new C(2, 'abc'), [true, false, true])
+  const d5 = new D(new C(1, 'a'), [true, false, true])
 
   assertEquals(compareValues(d1, d2), true)
   assertEquals(compareValues(d2, d1), true)

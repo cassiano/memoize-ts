@@ -17,8 +17,9 @@ type comparisonFnType<T> = (
 type EmptyObjectType = Record<string | number | symbol, never>
 
 /**
- * A function that compares two values. Its default behavior is to compare each parameter individually with the standand
- * `===` JS's strict-equals operator, taking care of objects and arrays of any depth.
+ * A function that compares two values. Its default behavior is to compare each parameter individually
+ * with the standand `===` JS's strict-equals operator, taking care of objects, maps and arrays of
+ * any depth. Classes (in fact, class instances) are covered, too.
  *
  * @template T - The values type
  * @param {T} left - The left value.
@@ -42,19 +43,32 @@ export const compareValues = <T>(left: T, right: T): boolean => {
   if (typeof left === 'object' && typeof right === 'object') {
     if (left === null || right === null) return false // Is either value `null`?
 
-    const leftKeys = Object.keys(left)
-    const rightKeys = Object.keys(right)
+    if (left instanceof Map && right instanceof Map) {
+      // Maps have different number of keys?
+      if (left.size !== right.size) return false
 
-    if (
-      leftKeys.length !== rightKeys.length || // Objects have different number of keys?
-      !compareValues(leftKeys.sort(), rightKeys.sort()) // Or different keys (no matter their order)?
-    )
-      return false
+      // Or different keys (order matter)?
+      if (!compareValues([...left.keys()], [...right.keys()])) return false
 
-    // Do all key+value pairs match?
-    return Object.entries(left).every(([leftKey, leftValue]) =>
-      compareValues(leftValue, right[leftKey as keyof typeof right]),
-    )
+      // Do all key+value pairs match?
+      return ([...left.entries()] as [unknown, unknown][]).every(
+        ([leftKey, leftValue]) => compareValues(leftValue, right.get(leftKey)),
+      )
+    } else {
+      const leftKeys = Object.keys(left)
+      const rightKeys = Object.keys(right)
+
+      if (
+        leftKeys.length !== rightKeys.length || // Objects have different number of keys?
+        !compareValues(leftKeys.sort(), rightKeys.sort()) // Or different keys (no matter their order)?
+      )
+        return false
+
+      // Do all key+value pairs match?
+      return Object.entries(left).every(([leftKey, leftValue]) =>
+        compareValues(leftValue, right[leftKey as keyof typeof right]),
+      )
+    }
   }
 
   // Values are not equal!
