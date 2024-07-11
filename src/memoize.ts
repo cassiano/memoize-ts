@@ -52,23 +52,24 @@ export const compareValues = <T>(left: T, right: T): boolean => {
 
       // Do all key+value pairs match?
       return ([...left.entries()] as [unknown, unknown][]).every(
-        ([leftKey, leftValue]) => compareValues(leftValue, right.get(leftKey)),
-      )
-    } else {
-      const leftKeys = Object.keys(left)
-      const rightKeys = Object.keys(right)
-
-      if (
-        leftKeys.length !== rightKeys.length || // Objects have different number of keys?
-        !compareValues(leftKeys.sort(), rightKeys.sort()) // Or different keys (no matter their order)?
-      )
-        return false
-
-      // Do all key+value pairs match?
-      return Object.entries(left).every(([leftKey, leftValue]) =>
-        compareValues(leftValue, right[leftKey as keyof typeof right]),
+        ([leftKey, leftValue]) =>
+          compareValues(leftValue, right.get(leftKey) as unknown),
       )
     }
+
+    const leftKeys = Object.keys(left)
+    const rightKeys = Object.keys(right)
+
+    if (
+      leftKeys.length !== rightKeys.length || // Objects have different number of keys?
+      !compareValues(leftKeys.sort(), rightKeys.sort()) // Or different keys (no matter their order)?
+    )
+      return false
+
+    // Do all key+value pairs match?
+    return Object.entries(left).every(([leftKey, leftValue]) =>
+      compareValues(leftValue, right[leftKey as keyof typeof right]),
+    )
   }
 
   // Values are not equal!
