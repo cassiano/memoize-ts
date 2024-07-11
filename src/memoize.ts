@@ -151,7 +151,7 @@ export const compareValues = <T>(left: T, right: T): boolean => {
  * Additional utility methods are provided, in order to manage the associated cache.
  *
  * @template T - The return type of the memoized function (always inferred automatically by TS).
- * @template P1, P2, ... Pn - The types of each of the n function's arguments (always inferred automatically by TS).
+ * @template P1, P2, … Pn - The types of each of the n function's arguments (always inferred automatically by TS).
  * @param {MemoizeFnType<T>} fn - The function to be memoized.
  * @param {comparisonFnType<T>} [comparisonFn] - An optional custom comparison function for determining cache hits based on the actual arguments passed.
  * @returns {MemoizeFnType<T> & MemoizeUtilsType<T>} - The memoized function with additional utility methods.
