@@ -30,7 +30,9 @@ type EmptyObjectType = Record<string | number | symbol, never>
 export const compareValues = <T>(left: T, right: T): boolean => {
   if (left === right) return true // Are exactly the same values?
 
-  if (typeof left !== typeof right) return false // Do they have different types? In general flagged by TS at compile-time, but still needed when running is JS.
+  // Do they have different types (as returned by the `typeof` operator)? In general this is flagged by TS
+  // at compile-time, but still needed when running in JS.
+  if (typeof left !== typeof right) return false
 
   // Are both values arrays?
   if (Array.isArray(left) && Array.isArray(right)) {
@@ -47,19 +49,19 @@ export const compareValues = <T>(left: T, right: T): boolean => {
   if (typeof left === 'object' && typeof right === 'object') {
     if (left === null || right === null) return false // Is either value `null`?
 
-    if (
-      !(
-        Array.isArray(left) &&
+    // Treat a very special case where one of the values is an array (e.g. `[10, 20, 30]`) and the other
+    // is an object with array behavior (e.g. `{ 0: 10, 1: 20, 2: 20 }`). It may happen in either side,
+    const arrayAndObjectWithArrayBehavior =
+      (Array.isArray(left) &&
         right.constructor.name === 'Object' &&
-        Object.keys(right).every(key => !Object.is(Number(key), NaN))
-      ) &&
-      !(
-        Array.isArray(right) &&
+        Object.keys(right).every(key => !Object.is(Number(key), NaN))) ||
+      (Array.isArray(right) &&
         left.constructor.name === 'Object' &&
-        Object.keys(left).every(key => !Object.is(Number(key), NaN))
-      )
-    ) {
-      if (left.constructor.name !== right.constructor.name) return false // Are objects of same type?
+        Object.keys(left).every(key => !Object.is(Number(key), NaN)))
+
+    if (!arrayAndObjectWithArrayBehavior) {
+      // Are objects of same type (this time based on their constructors)?
+      if (left.constructor.name !== right.constructor.name) return false
 
       // Are objects of type RegExp or Date?
       if (
@@ -68,6 +70,7 @@ export const compareValues = <T>(left: T, right: T): boolean => {
       )
         return left.toString() === right.toString() // Compare their string representations.
 
+      // Are objects of type Map?
       if (left instanceof Map && right instanceof Map) {
         // Maps have different number of keys?
         if (left.size !== right.size) return false
@@ -82,6 +85,8 @@ export const compareValues = <T>(left: T, right: T): boolean => {
         )
       }
     }
+
+    // From this point on simply assume both are standard JS objects, used as dictionaries.
 
     const leftKeys = Object.keys(left)
     const rightKeys = Object.keys(right)

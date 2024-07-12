@@ -106,6 +106,11 @@ Deno.test('Comparing values', () => {
     true,
   )
 
+  assertEquals(
+    compareValues({ 0: 10, 1: 20, 2: 30, 3: 40, 4: 50 }, [10, 20, 30, 40, 50]),
+    true,
+  )
+
   // Different key order.
   assertEquals(
     compareValues([10, 20, 30, 40, 50], { 4: 50, 3: 40, 2: 30, 1: 20, 0: 10 }),
@@ -264,6 +269,50 @@ Deno.test('Comparing values', () => {
       (n: number) => n ** 2,
     ),
     false,
+  )
+
+  /////////////////
+  // All at once //
+  /////////////////
+
+  assertEquals(
+    compareValues(
+      [
+        1,
+        'abc',
+        false,
+        /xyz/,
+        new Date(2024, 7, 12),
+        (n: number) => -n,
+        undefined,
+        null,
+        [10, 20, 30],
+        { x: 1, y: 2, z: 3 },
+        new Map([
+          ['x', 1],
+          ['y', 2],
+          ['z', 3],
+        ]),
+      ],
+      [
+        1,
+        'abc',
+        false,
+        /xyz/,
+        new Date(2024, 7, 12),
+        (n: number) => -n,
+        undefined,
+        null,
+        [10, 20, 30],
+        { x: 1, y: 2, z: 3 },
+        new Map([
+          ['x', 1],
+          ['y', 2],
+          ['z', 3],
+        ]),
+      ],
+    ),
+    true,
   )
 })
 

@@ -94,7 +94,7 @@ So, if you happen to have a recursive function imported from some external libra
 
 ## Optional custom parameter-comparison function
 
-The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a comparison function. The default behavior of the comparison function is to compare each parameter individually with the standand `===` JS/TS's strict-equals operator, taking care of **objects**, **maps** and **arrays** of any depth. **Classes** (in fact, class instances) are covered, too.
+The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a **highly generic**, **performant** and **powerful** default comparison function. Its default behavior is to compare each parameter individually with the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but the function also takes care of collection-type structures like **objects**, **maps** and **arrays** of any depth. **Classes** (in fact, class instances), **regular expressions**, **dates** and even **functions** are covered, too.
 
 Beware that cyclical data structures are not supported, yet. But will be at any time soon.
 
@@ -103,29 +103,45 @@ All the following return `true`:
 ```ts
 compareValues([1, 2, 3], [1, 2, 3])
 
-compareValues(
-  [1, 'abc', false, undefined, null],
-  [1, 'abc', false, undefined, null],
-)
-
-compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3 })
-
 // Object's order doesn't matter.
+compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3 })
 compareValues({ x: 1, y: 2, z: 3 }, { y: 2, z: 3, x: 1 })
 
-compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2, 3] })
-
 compareValues(
-  new Map([
-    ['x', 1],
-    ['y', 2],
-    ['z', 3],
-  ]),
-  new Map([
-    ['x', 1],
-    ['y', 2],
-    ['z', 3],
-  ]),
+  [
+    1,
+    'abc',
+    false,
+    /xyz/,
+    new Date(2024, 7, 12),
+    (n: number) => -n,
+    undefined,
+    null,
+    [10, 20, 30],
+    { x: 1, y: 2, z: 3 },
+    new Map([
+      ['x', 1],
+      ['y', 2],
+      ['z', 3],
+    ]),
+  ],
+  [
+    1,
+    'abc',
+    false,
+    /xyz/,
+    new Date(2024, 7, 12),
+    (n: number) => -n,
+    undefined,
+    null,
+    [10, 20, 30],
+    { x: 1, y: 2, z: 3 },
+    new Map([
+      ['x', 1],
+      ['y', 2],
+      ['z', 3],
+    ]),
+  ],
 )
 ```
 
@@ -165,7 +181,7 @@ compareValues(
 )
 ```
 
-The good news is that the above function, `compareValues()`, is also exported from the package and can also be used in your project if needed, even if the use has nothing to do with memoization itself.
+The good news is that the above function, `compareValues()`, is also exported from the package and can be used in your project if needed, even if the use has nothing to do with memoization itself.
 
 However, if a different comparison behavior is necessary you can provide a custom version as the second parameter of the `memoize()` HOF, following the function callback signature below:
 
