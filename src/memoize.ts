@@ -39,22 +39,48 @@ export const compareValues = <T>(left: T, right: T): boolean => {
     return left.every((leftValue, i) => compareValues(leftValue, right[i])) // Do all values match?
   }
 
+  // Are objects both functions?
+  if (typeof left === 'function' && typeof right === 'function')
+    return left.toString() === right.toString() // Compare their string representations.
+
   // Are both values objects? PS: one (and only one) of them could possibly be `null`.
   if (typeof left === 'object' && typeof right === 'object') {
     if (left === null || right === null) return false // Is either value `null`?
 
-    if (left instanceof Map && right instanceof Map) {
-      // Maps have different number of keys?
-      if (left.size !== right.size) return false
-
-      // Or different keys (order matter)?
-      if (!compareValues([...left.keys()], [...right.keys()])) return false
-
-      // Do all key+value pairs match?
-      return ([...left.entries()] as [unknown, unknown][]).every(
-        ([leftKey, leftValue]) =>
-          compareValues(leftValue, right.get(leftKey) as unknown),
+    if (
+      !(
+        Array.isArray(left) &&
+        right.constructor.name === 'Object' &&
+        Object.keys(right).every(key => !Object.is(Number(key), NaN))
+      ) &&
+      !(
+        Array.isArray(right) &&
+        left.constructor.name === 'Object' &&
+        Object.keys(left).every(key => !Object.is(Number(key), NaN))
       )
+    ) {
+      if (left.constructor.name !== right.constructor.name) return false // Are objects of same type?
+
+      // Are objects of type RegExp or Date?
+      if (
+        (left instanceof RegExp && right instanceof RegExp) ||
+        (left instanceof Date && right instanceof Date)
+      )
+        return left.toString() === right.toString() // Compare their string representations.
+
+      if (left instanceof Map && right instanceof Map) {
+        // Maps have different number of keys?
+        if (left.size !== right.size) return false
+
+        // Or different keys (order matter)?
+        if (!compareValues([...left.keys()], [...right.keys()])) return false
+
+        // Do all key+value pairs match?
+        return ([...left.entries()] as [unknown, unknown][]).every(
+          ([leftKey, leftValue]) =>
+            compareValues(leftValue, right.get(leftKey) as unknown),
+        )
+      }
     }
 
     const leftKeys = Object.keys(left)

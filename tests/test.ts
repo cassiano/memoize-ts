@@ -226,6 +226,45 @@ Deno.test('Comparing values', () => {
   assertEquals(compareValues(d4, d1), false)
   assertEquals(compareValues(d1, d5), false)
   assertEquals(compareValues(d5, d1), false)
+
+  /////////////
+  // Regexps //
+  /////////////
+
+  assertEquals(compareValues(/abc/, /abc/), true)
+  assertEquals(compareValues(/abc/, /abcd/), false)
+
+  ///////////
+  // Dates //
+  ///////////
+
+  assertEquals(
+    compareValues(new Date(2024, 7, 12), new Date(2024, 7, 12)),
+    true,
+  )
+  assertEquals(
+    compareValues(new Date(2024, 1, 1), new Date(2024, 12, 31)),
+    false,
+  )
+
+  ///////////////
+  // Functions //
+  ///////////////
+
+  assertEquals(
+    compareValues(
+      (n: number) => -n,
+      (n: number) => -n,
+    ),
+    true,
+  )
+  assertEquals(
+    compareValues(
+      (n: number) => -n,
+      (n: number) => n ** 2,
+    ),
+    false,
+  )
 })
 
 Deno.test('Memoizing 0 parameters functions', () => {
