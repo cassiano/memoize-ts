@@ -17,7 +17,7 @@ type comparisonFnType<T> = (
 type EmptyObjectType = Record<string | number | symbol, never>
 
 /**
- * A function that compares two values. Its default behavior is to compare each parameter individually with
+ * A function that compares two values. Its default behavior is to compare each value individually with
  * the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but
  * the function also takes care of collection-like structures such as objects, maps and arrays of any depth.
  * And you can freely mix them all. Classes (in fact, class instances), regular expressions, dates and even
@@ -187,7 +187,7 @@ export const compareValues = <T>(left: T, right: T): boolean => {
  * @template T - The return type of the memoized function (always inferred automatically by TS).
  * @template P1, P2 … Pn - The types of each of the n function's arguments (always inferred automatically by TS).
  * @param {MemoizeFnType<T>} fn - The function to be memoized.
- * @param {comparisonFnType<T>} [comparisonFn] - An optional custom comparison function for determining cache hits based on the actual arguments passed.
+ * @param {comparisonFnType<T>} [comparisonFn] - An optional custom parameter-comparison function for determining cache hits based on the actual arguments passed.
  * @returns {MemoizeFnType<T> & MemoizeUtilsType<T>} - The memoized function with additional utility methods.
  */
 
