@@ -44,7 +44,7 @@ export const compareValues = <T>(left: T, right: T): boolean => {
     return left.every((leftValue, i) => compareValues(leftValue, right[i])) // Do all values match?
   }
 
-  // Are objects both functions?
+  // Are both objects functions?
   if (typeof left === 'function' && typeof right === 'function')
     return left.toString() === right.toString() // Compare their string representations.
 
