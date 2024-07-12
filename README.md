@@ -94,7 +94,11 @@ So, if you happen to have a recursive function imported from some external libra
 
 ## Optional custom parameter-comparison function
 
-The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a **highly generic**, **performant** and **powerful** default comparison function. Its default behavior is to compare each parameter individually with the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but the function also takes care of collection-type structures like **objects**, **maps** and **arrays** of any depth. **Classes** (in fact, class instances), **regular expressions**, **dates** and even **functions** are covered, too.
+The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a **highly generic**, **performant** and **powerful** default comparison function.
+
+Its default behavior is to compare each parameter individually with the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but the function also takes care of collection-type structures like **objects**, **maps** and **arrays** of any depth. And you can freely mix them all.
+
+**Classes** (in fact, class instances), **regular expressions**, **dates** and even **functions** are covered, too.
 
 Beware that cyclical data structures are not supported, yet. But will be at any time soon.
 
@@ -143,6 +147,9 @@ compareValues(
     ]),
   ],
 )
+
+// Arrays x Objects which behave as arrays.
+compareValues([10, 20, 30, 40, 50], { 0: 10, 1: 20, 2: 30, 3: 40, 4: 50 })
 ```
 
 While these return `false`:
@@ -250,7 +257,9 @@ factorial.clearEntry(5)
 
 ## Optional parameters
 
-- The current implementation does not support optional parameters (with or without default values), due to the way TS's function overloading works. A simple solution is to pack all parameters either in a plain object or a tuple, and pass them as a **single** parameter, allowing TS to infer all types (including the optional ones) correctly.
+The current implementation does not support optional parameters (with or without default values), due to the way TS's function overloading works.
+
+A simple solution is to pack all parameters either in a plain object or a tuple, and pass them as a **single** parameter, allowing TS to infer all types (including the optional ones) correctly.
 
 This **WON'T** work:
 
