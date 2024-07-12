@@ -107,7 +107,7 @@ All the following return `true`:
 ```ts
 compareValues([1, 2, 3], [1, 2, 3])
 
-// Object's order doesn't matter.
+// Objects (keys) order doesn't matter.
 compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3 })
 compareValues({ x: 1, y: 2, z: 3 }, { y: 2, z: 3, x: 1 })
 
@@ -173,7 +173,7 @@ compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2 })
 // Right object z's value is longer than left's one.
 compareValues({ x: 1, y: 2, z: [1, 2, 3] }, { x: 1, y: 2, z: [1, 2, 3, 4] })
 
-// Different maps order.
+// Different maps (key) order.
 compareValues(
   new Map([
     ['x', 1],
