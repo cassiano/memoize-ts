@@ -50,7 +50,7 @@ export const compareValues = <T>(left: T, right: T): boolean => {
     if (left === null || right === null) return false // Is either value `null`?
 
     // Treat a very special case where one of the values is an array (e.g. `[10, 20, 30]`) and the other
-    // is an object with array behavior (e.g. `{ 0: 10, 1: 20, 2: 20 }`). It may happen in either side,
+    // is an object with array behavior (e.g. `{ 0: 10, 1: 20, 2: 20 }`). It may happen in either side.
     const arrayAndObjectWithArrayBehavior =
       (Array.isArray(left) &&
         right.constructor.name === 'Object' &&
