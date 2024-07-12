@@ -117,6 +117,31 @@ Deno.test('Comparing values', () => {
     true,
   )
 
+  // Right has fewer elements.
+  assertEquals(
+    compareValues([10, 20, 30, 40, 50], {
+      0: 10,
+      1: 20,
+      2: 30,
+      3: 40,
+      4: 50,
+      5: 60,
+    }),
+    false,
+  )
+
+  // Left has fewer elements.
+  assertEquals(
+    compareValues([10, 20, 30, 40, 50, 60], {
+      0: 10,
+      1: 20,
+      2: 30,
+      3: 40,
+      4: 50,
+    }),
+    false,
+  )
+
   //////////
   // Maps //
   //////////
