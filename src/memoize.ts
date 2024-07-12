@@ -17,14 +17,17 @@ type comparisonFnType<T> = (
 type EmptyObjectType = Record<string | number | symbol, never>
 
 /**
- * A function that compares two values. Its default behavior is to compare each parameter individually
- * with the standand `===` JS's strict-equals operator, taking care of objects, maps and arrays of
- * any depth. Classes (in fact, class instances) are covered, too.
+ * A function that compares two values. Its default behavior is to compare each parameter individually with
+ * the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but
+ * the function also takes care of collection-like structures such as objects, maps and arrays of any depth.
+ * And you can freely mix them all. Classes (in fact, class instances), regular expressions, dates and even
+ * functions are covered, too. Beware that cyclical data structures are not supported, yet. But will be at
+ * any time soon.
  *
- * @template T - The values type
+ * @template T - The left and right values type.
  * @param {T} left - The left value.
  * @param {T} right - The right value.
- * @returns {boolean} - Whether the 2 values are considered equal
+ * @returns {boolean} - Whether the 2 values are considered equal.
  */
 
 export const compareValues = <T>(left: T, right: T): boolean => {
@@ -50,7 +53,7 @@ export const compareValues = <T>(left: T, right: T): boolean => {
     if (left === null || right === null) return false // Is either value `null`?
 
     // Treat a very special case where one of the values is an array (e.g. `[10, 20, 30]`) and the other
-    // is an object with array behavior (e.g. `{ 0: 10, 1: 20, 2: 20 }`). It may happen in either side.
+    // is an object with array behavior (e.g. `{ 0: 10, 1: 20, 2: 20 }`). It may happen on either side.
     const arrayAndObjectWithArrayBehavior =
       (Array.isArray(left) &&
         right.constructor.name === 'Object' &&
@@ -182,7 +185,7 @@ export const compareValues = <T>(left: T, right: T): boolean => {
  * Additional utility methods are provided, in order to manage the associated cache.
  *
  * @template T - The return type of the memoized function (always inferred automatically by TS).
- * @template P1, P2, … Pn - The types of each of the n function's arguments (always inferred automatically by TS).
+ * @template P1, P2 … Pn - The types of each of the n function's arguments (always inferred automatically by TS).
  * @param {MemoizeFnType<T>} fn - The function to be memoized.
  * @param {comparisonFnType<T>} [comparisonFn] - An optional custom comparison function for determining cache hits based on the actual arguments passed.
  * @returns {MemoizeFnType<T> & MemoizeUtilsType<T>} - The memoized function with additional utility methods.
