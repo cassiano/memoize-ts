@@ -97,7 +97,7 @@ So, if you happen to have a recursive function imported from some external libra
 
 The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a highly generic, efficient and very powerful default comparison function.
 
-Its default behavior is to compare each value individually with the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but the function also takes care of collection-like structures such as **objects**, **maps** and **arrays** of any depth. And you can freely mix them all.
+Its default behavior is to compare each value individually with the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but the function also takes care of collection-like structures such as **objects**, **maps** (with all kinds of keys) and **arrays** of any depth. And you can freely and safely mix them all.
 
 **Classes** (in fact, class instances), **regular expressions**, **dates** and even **functions** are covered, too.
 
@@ -124,10 +124,11 @@ compareValues(
     null,
     [10, 20, 30],
     { x: 1, y: 2, z: 3 },
+    // Maps with unusual keys.
     new Map([
       ['x', 1],
-      ['y', 2],
-      ['z', 3],
+      [['y'], 2],
+      [{ z: [true, false] }, 3],
     ]),
   ],
   [
@@ -141,10 +142,11 @@ compareValues(
     null,
     [10, 20, 30],
     { x: 1, y: 2, z: 3 },
+    // Maps with unusual keys.
     new Map([
       ['x', 1],
-      ['y', 2],
-      ['z', 3],
+      [['y'], 2],
+      [{ z: [true, false] }, 3],
     ]),
   ],
 )

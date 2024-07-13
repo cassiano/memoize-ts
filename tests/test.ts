@@ -229,6 +229,45 @@ Deno.test('Comparing values', () => {
     true,
   )
 
+  // Unusual keys.
+  assertEquals(
+    compareValues(
+      new Map([
+        [[], 1],
+        [{ x: 1 }, 2],
+        [[{ a: true }], 3],
+        [
+          [
+            { a: true },
+            /xyz/,
+            null,
+            undefined,
+            new Date(2024, 7, 12),
+            (n: number) => -n,
+          ],
+          4,
+        ],
+      ]),
+      new Map([
+        [[], 1],
+        [{ x: 1 }, 2],
+        [[{ a: true }], 3],
+        [
+          [
+            { a: true },
+            /xyz/,
+            null,
+            undefined,
+            new Date(2024, 7, 12),
+            (n: number) => -n,
+          ],
+          4,
+        ],
+      ]),
+    ),
+    true,
+  )
+
   /////////////
   // Classes //
   /////////////

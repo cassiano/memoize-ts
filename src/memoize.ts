@@ -19,10 +19,10 @@ type EmptyObjectType = Record<string | number | symbol, never>
 /**
  * A function that compares two values. Its default behavior is to compare each value individually with
  * the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but
- * the function also takes care of collection-like structures such as objects, maps and arrays of any depth.
- * And you can freely mix them all. Classes (in fact, class instances), regular expressions, dates and even
- * functions are covered, too. Circular data structures are also supported (so there is no risk of the
- * dreaded "Stack Overflow" error).
+ * the function also takes care of collection-like structures such as objects, maps (with all kinds of keys)
+ * and arrays of any depth. And you can freely and safely mix them all. Classes (in fact, class instances),
+ * regular expressions, dates and even functions are covered, too. Circular data structures are also
+ * supported (so there is no risk of the dreaded "Stack Overflow" error).
  *
  * @template T - The left and right values type, such that incompatible types are caught in compile time
  * when using TypeScript.
@@ -96,8 +96,17 @@ export const compareValues = <T>(
 
         // Do all key+value pairs match?
         return ([...left.entries()] as [unknown, unknown][]).every(
-          ([leftKey, leftValue]) =>
-            compareValues(leftValue, right.get(leftKey) as unknown, evaluated),
+          ([leftKey, leftValue]) => {
+            const rightKey = ([...right.keys()] as unknown[]).find(key =>
+              compareValues(key, leftKey),
+            )
+
+            return compareValues(
+              leftValue,
+              right.get(rightKey) as unknown,
+              evaluated,
+            )
+          },
         )
       }
     }
