@@ -97,6 +97,8 @@ export const compareValues = <T>(
         // Do all key+value pairs match?
         return ([...left.entries()] as [unknown, unknown][]).every(
           ([leftKey, leftValue]) => {
+            // Find the corresponding right key. Notice that this key will always be found, given we have
+            // already checked that left and right keys match.
             const rightKey = ([...right.keys()] as unknown[]).find(key =>
               compareValues(key, leftKey),
             )

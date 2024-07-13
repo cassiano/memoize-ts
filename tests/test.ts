@@ -39,7 +39,10 @@ Deno.test('Comparing values', () => {
   /////////////////////
 
   // No need for this test, since it is flagged by TS at compile-time.
-  // assertEquals(valuesEqual(1, '1'), false)
+  // assertEquals(compareValues(1, '1'), false)
+
+  assertEquals(compareValues<number | string>(1, '1'), false)
+  assertEquals(compareValues<number | string>('1', 1), false)
 
   ////////////
   // Arrays //
@@ -230,11 +233,12 @@ Deno.test('Comparing values', () => {
   )
 
   // Unusual keys.
+
   assertEquals(
     compareValues(
       new Map([
-        [[], 1],
-        [{ x: 1 }, 2],
+        [[10, 20, 30, 40], 1],
+        [{ x: 1, y: 2, z: 3 }, 2],
         [[{ a: true }], 3],
         [
           [
@@ -247,10 +251,12 @@ Deno.test('Comparing values', () => {
           ],
           4,
         ],
+        [null, 5],
+        [undefined, 6],
       ]),
       new Map([
-        [[], 1],
-        [{ x: 1 }, 2],
+        [[10, 20, 30, 40], 1],
+        [{ x: 1, y: 2, z: 3 }, 2],
         [[{ a: true }], 3],
         [
           [
@@ -263,9 +269,179 @@ Deno.test('Comparing values', () => {
           ],
           4,
         ],
+        [null, 5],
+        [undefined, 6],
       ]),
     ),
     true,
+  )
+
+  assertEquals(
+    compareValues(
+      new Map([
+        [[10, 20, 30, 40], 1],
+        [{ x: 1, y: 2, z: 3 }, 2],
+        [[{ a: true }], 3],
+        [
+          [
+            { a: true },
+            /xyzw/, // Regexps differ!
+            null,
+            undefined,
+            new Date(2024, 7, 12),
+            (n: number) => -n,
+          ],
+          4,
+        ],
+        [null, 5],
+        [undefined, 6],
+      ]),
+      new Map([
+        [[10, 20, 30, 40], 1],
+        [{ x: 1 }, 2],
+        [[{ a: true }], 3],
+        [
+          [
+            { a: true },
+            /xyz/,
+            null,
+            undefined,
+            new Date(2024, 7, 12),
+            (n: number) => -n,
+          ],
+          4,
+        ],
+        [null, 5],
+        [undefined, 6],
+      ]),
+    ),
+    false,
+  )
+
+  assertEquals(
+    compareValues(
+      new Map([
+        [[10, 20, 30, 40], 1],
+        [{ x: 1 }, 2],
+        [[{ a: true }], 3],
+        [
+          [
+            { a: true },
+            /xyz/,
+            null,
+            undefined,
+            new Date(2024, 7, 12),
+            (n: number) => -n,
+          ],
+          40, // Values differ!
+        ],
+        [null, 5],
+        [undefined, 6],
+      ]),
+      new Map([
+        [[10, 20, 30, 40], 1],
+        [{ x: 1 }, 2],
+        [[{ a: true }], 3],
+        [
+          [
+            { a: true },
+            /xyz/,
+            null,
+            undefined,
+            new Date(2024, 7, 12),
+            (n: number) => -n,
+          ],
+          4,
+        ],
+        [null, 5],
+        [undefined, 6],
+      ]),
+    ),
+    false,
+  )
+
+  assertEquals(
+    compareValues(
+      new Map([
+        [[10, 20, 30, 40], 1],
+        [{ x: 1, y: 2, z: 3 }, 2],
+        [[{ a: true }], 3],
+        [
+          [
+            { a: true },
+            /xyz/,
+            null,
+            undefined,
+            new Date(2024, 7, 12),
+            (n: number) => -n,
+          ],
+          4,
+        ],
+        [null, 5],
+        [undefined, 6],
+      ]),
+      new Map([
+        [[10, 20, 30, 40, 50], 1], // Array is longer.
+        [{ x: 1, y: 2, z: 3 }, 2],
+        [[{ a: true }], 3],
+        [
+          [
+            { a: true },
+            /xyz/,
+            null,
+            undefined,
+            new Date(2024, 7, 12),
+            (n: number) => -n,
+          ],
+          4,
+        ],
+        [null, 5],
+        [undefined, 6],
+      ]),
+    ),
+    false,
+  )
+
+  assertEquals(
+    compareValues(
+      new Map([
+        [[10, 20, 30, 40], 1],
+        [{ x: 1, y: 2, z: 3 }, 2],
+        [[{ a: true }], 3],
+        [
+          [
+            { a: true },
+            /xyz/,
+            null,
+            undefined,
+            new Date(2024, 7, 12),
+            (n: number) => -n,
+          ],
+          4,
+        ],
+        [null, 5],
+        [undefined, 6],
+      ]),
+      new Map([
+        [[10, 20, 30], 1], // Array is shorter.
+        [{ x: 1, y: 2, z: 3 }, 2],
+        [[{ a: true }], 3],
+        [
+          [
+            { a: true },
+            /xyz/,
+            null,
+            undefined,
+            new Date(2024, 7, 12),
+            (n: number) => -n,
+          ],
+          4,
+        ],
+        [null, 5],
+        [undefined, 6],
+      ]),
+    ),
+    false,
   )
 
   /////////////

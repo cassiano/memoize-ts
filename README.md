@@ -170,7 +170,7 @@ compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 4 })
 // Right object has more keys than the left one.
 compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3, w: 4 })
 
-// Right object has less keys than the left one.
+// Right object has fewer keys than the left one.
 compareValues({ x: 1, y: 2, z: 3 }, { x: 1, y: 2 })
 
 // Right object z's value is longer than left's one.
