@@ -1,6 +1,6 @@
 {
   "name": "@cdandrea/memoize-ts",
-  "version": "1.0.45",
+  "version": "1.0.46",
   "description": "100% type-safe memoize() function written in TypeScript",
   "main": "dist/memoize.js",
   "types": "dist/memoize.d.ts",
@@ -61,10 +61,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/cassiano/memoize-ts.git"
+    "url": "git+https://github.com/cassiano/memoize-ts.git"
   },
   "bugs": {
-    "url": "https://gitlab.com/cassiano/memoize-ts/issues"
+    "url": "https://github.com/cassiano/memoize-ts/issues"
   },
-  "homepage": "https://gitlab.com/cassiano/memoize-ts#readme"
+  "homepage": "https://github.com/cassiano/memoize-ts"
 }
