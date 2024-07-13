@@ -34,7 +34,7 @@ type EmptyObjectType = Record<string | number | symbol, never>
 export const compareValues = <T>(
   left: T,
   right: T,
-  evaluated: { left: unknown; right: unknown }[] = [],
+  alreadyCompared: { left: unknown; right: unknown }[] = [],
 ): boolean => {
   if (left === right) return true // Are exactly the same values?
 
@@ -42,17 +42,23 @@ export const compareValues = <T>(
   // at compile-time, but still needed when running in JS.
   if (typeof left !== typeof right) return false
 
-  if (evaluated.find(item => item.left === left && item.right === right))
+  if (
+    alreadyCompared.find(
+      item =>
+        (item.left === left && item.right === right) ||
+        (item.left === right && item.right === left),
+    )
+  )
     return true
 
-  evaluated.push({ left, right })
+  alreadyCompared.unshift({ left, right })
 
   // Are both values arrays?
   if (Array.isArray(left) && Array.isArray(right)) {
     if (left.length !== right.length) return false // Arrays have different lengths?
 
     return left.every((leftValue, i) =>
-      compareValues(leftValue, right[i], evaluated),
+      compareValues(leftValue, right[i], alreadyCompared),
     ) // Do all values match?
   }
 
@@ -91,7 +97,9 @@ export const compareValues = <T>(
         if (left.size !== right.size) return false
 
         // Or different keys (order matter)?
-        if (!compareValues([...left.keys()], [...right.keys()], evaluated))
+        if (
+          !compareValues([...left.keys()], [...right.keys()], alreadyCompared)
+        )
           return false
 
         // Do all key+value pairs match?
@@ -100,13 +108,13 @@ export const compareValues = <T>(
             // Find the corresponding right key. Notice that this key will always be found, given we have
             // already checked that left and right keys match.
             const rightKey = ([...right.keys()] as unknown[]).find(key =>
-              compareValues(key, leftKey),
+              compareValues(key, leftKey, alreadyCompared),
             )
 
             return compareValues(
               leftValue,
               right.get(rightKey) as unknown,
-              evaluated,
+              alreadyCompared,
             )
           },
         )
@@ -120,13 +128,17 @@ export const compareValues = <T>(
 
     if (
       leftKeys.length !== rightKeys.length || // Objects have different number of keys?
-      !compareValues(leftKeys.sort(), rightKeys.sort(), evaluated) // Or different keys (no matter their order)?
+      !compareValues(leftKeys.sort(), rightKeys.sort(), alreadyCompared) // Or different keys (no matter their order)?
     )
       return false
 
     // Do all key+value pairs match?
     return Object.entries(left).every(([leftKey, leftValue]) =>
-      compareValues(leftValue, right[leftKey as keyof typeof right], evaluated),
+      compareValues(
+        leftValue,
+        right[leftKey as keyof typeof right],
+        alreadyCompared,
+      ),
     )
   }
 
