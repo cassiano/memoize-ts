@@ -339,6 +339,50 @@ Deno.test('Comparing values', () => {
     ),
     true,
   )
+
+  //////////////////////////////
+  // Circular data structures //
+  //////////////////////////////
+
+  class ListNode {
+    constructor(public value: number, public previous?: ListNode) {}
+  }
+
+  // Circular.
+  const m1 = new ListNode(1)
+  const m2 = new ListNode(2, m1)
+  const m3 = new ListNode(3, m2)
+  m1.previous = m3
+
+  // Circular.
+  const n1 = new ListNode(1)
+  const n2 = new ListNode(2, n1)
+  const n3 = new ListNode(3, n2)
+  n1.previous = n3
+
+  // Circular, but with different values.
+  const o1 = new ListNode(10)
+  const o2 = new ListNode(20, o1)
+  const o3 = new ListNode(30, o2)
+  o1.previous = o3
+
+  // Same values, but non-circular.
+  const p1 = new ListNode(1)
+  const p2 = new ListNode(2, p1)
+  const p3 = new ListNode(3, p2)
+
+  assertEquals(compareValues(m3, m3), true)
+  assertEquals(compareValues(n3, n3), true)
+  assertEquals(compareValues(o3, o3), true)
+
+  assertEquals(compareValues(m3, n3), true)
+  assertEquals(compareValues(n3, m3), true)
+
+  assertEquals(compareValues(n3, o3), false)
+  assertEquals(compareValues(o3, n3), false)
+
+  assertEquals(compareValues(n3, p3), false)
+  assertEquals(compareValues(p3, n3), false)
 })
 
 Deno.test('Memoizing 0 parameters functions', () => {

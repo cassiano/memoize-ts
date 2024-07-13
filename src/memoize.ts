@@ -21,8 +21,7 @@ type EmptyObjectType = Record<string | number | symbol, never>
  * the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but
  * the function also takes care of collection-like structures such as objects, maps and arrays of any depth.
  * And you can freely mix them all. Classes (in fact, class instances), regular expressions, dates and even
- * functions are covered, too. Beware that cyclical data structures are not supported, yet. But will be at
- * any time soon.
+ * functions are covered, too. Circular data structures are also supported.
  *
  * @template T - The left and right values type.
  * @param {T} left - The left value.
@@ -30,18 +29,29 @@ type EmptyObjectType = Record<string | number | symbol, never>
  * @returns {boolean} - Whether the 2 values are considered equal.
  */
 
-export const compareValues = <T>(left: T, right: T): boolean => {
+export const compareValues = <T>(
+  left: T,
+  right: T,
+  evaluated: { left: unknown; right: unknown }[] = [],
+): boolean => {
   if (left === right) return true // Are exactly the same values?
 
   // Do they have different types (as returned by the `typeof` operator)? In general this is flagged by TS
   // at compile-time, but still needed when running in JS.
   if (typeof left !== typeof right) return false
 
+  if (evaluated.find(item => item.left === left && item.right === right))
+    return true
+
+  evaluated.push({ left, right })
+
   // Are both values arrays?
   if (Array.isArray(left) && Array.isArray(right)) {
     if (left.length !== right.length) return false // Arrays have different lengths?
 
-    return left.every((leftValue, i) => compareValues(leftValue, right[i])) // Do all values match?
+    return left.every((leftValue, i) =>
+      compareValues(leftValue, right[i], evaluated),
+    ) // Do all values match?
   }
 
   // Are both objects functions?
@@ -79,12 +89,13 @@ export const compareValues = <T>(left: T, right: T): boolean => {
         if (left.size !== right.size) return false
 
         // Or different keys (order matter)?
-        if (!compareValues([...left.keys()], [...right.keys()])) return false
+        if (!compareValues([...left.keys()], [...right.keys()], evaluated))
+          return false
 
         // Do all key+value pairs match?
         return ([...left.entries()] as [unknown, unknown][]).every(
           ([leftKey, leftValue]) =>
-            compareValues(leftValue, right.get(leftKey) as unknown),
+            compareValues(leftValue, right.get(leftKey) as unknown, evaluated),
         )
       }
     }
@@ -96,13 +107,13 @@ export const compareValues = <T>(left: T, right: T): boolean => {
 
     if (
       leftKeys.length !== rightKeys.length || // Objects have different number of keys?
-      !compareValues(leftKeys.sort(), rightKeys.sort()) // Or different keys (no matter their order)?
+      !compareValues(leftKeys.sort(), rightKeys.sort(), evaluated) // Or different keys (no matter their order)?
     )
       return false
 
     // Do all key+value pairs match?
     return Object.entries(left).every(([leftKey, leftValue]) =>
-      compareValues(leftValue, right[leftKey as keyof typeof right]),
+      compareValues(leftValue, right[leftKey as keyof typeof right], evaluated),
     )
   }
 

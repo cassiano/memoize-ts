@@ -101,7 +101,7 @@ Its default behavior is to compare each value individually with the standand `==
 
 **Classes** (in fact, class instances), **regular expressions**, **dates** and even **functions** are covered, too.
 
-Beware that cyclical data structures are not supported, yet. But will be at any time soon.
+Circular data structures are also supported.
 
 All the following return `true`:
 
