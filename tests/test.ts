@@ -354,7 +354,7 @@ Deno.test('Comparing values', () => {
   const m3 = new ListNode(3, m2)
   m1.previous = m3
 
-  // Circular.
+  // Circular, with identical values.
   const n1 = new ListNode(1)
   const n2 = new ListNode(2, n1)
   const n3 = new ListNode(3, n2)
@@ -366,7 +366,7 @@ Deno.test('Comparing values', () => {
   const o3 = new ListNode(30, o2)
   o1.previous = o3
 
-  // Same values, but non-circular.
+  // Identical values, but non-circular.
   const p1 = new ListNode(1)
   const p2 = new ListNode(2, p1)
   const p3 = new ListNode(3, p2)

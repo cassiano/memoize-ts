@@ -21,12 +21,14 @@ type EmptyObjectType = Record<string | number | symbol, never>
  * the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but
  * the function also takes care of collection-like structures such as objects, maps and arrays of any depth.
  * And you can freely mix them all. Classes (in fact, class instances), regular expressions, dates and even
- * functions are covered, too. Circular data structures are also supported.
+ * functions are covered, too. Circular data structures are also supported (so there is no risk of the
+ * dreaded "Stack Overflow" error).
  *
- * @template T - The left and right values type.
+ * @template T - The left and right values type, such that incompatible types are caught in compile time
+ * when using TypeScript.
  * @param {T} left - The left value.
  * @param {T} right - The right value.
- * @returns {boolean} - Whether the 2 values are considered equal.
+ * @returns {boolean} - Whether the 2 values are considered the same (i.e. are equal).
  */
 
 export const compareValues = <T>(
