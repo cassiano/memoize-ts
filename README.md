@@ -8,9 +8,10 @@
 - Supports functions that have up to 30 parameters
 - Supports [recursive functions](#supporting-recursive-functions)
 - Provides methods for managing the [internal cache](#managing-the-internal-cache)
-- Provides a default function for searching entries in the cache, while supporting a [custom parameter-comparison function](#optional-custom-parameter-comparison-function)
-- No external dependencies
+- Provides a default callback function for searching entries in the cache, while supporting a [custom parameter-comparison callback function](#optional-custom-parameter-comparison-callback-function)
 - Fully compatible with JavaScript
+- Very small (only 2.17 KiB gzipped when bundled)
+- No external dependencies
 
 ## Installation
 
@@ -93,15 +94,15 @@ console.log(fibonacci(40))
 
 So, if you happen to have a recursive function imported from some external library, normally declared with `const`, and wish to memoize it, I must say that **you are out of luck, pal** 🤣🤣🤣.
 
-## Optional custom parameter-comparison function
+## Optional custom parameter-comparison callback function
 
-The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a highly generic, efficient and very powerful default comparison function.
+The `memoize()` HOF needs a way to check if an entry (combination of parameters) is already cached and for that is uses a highly generic, efficient and powerful default comparison callback function.
 
-Its default behavior is to compare each value individually with the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but the function also takes care of collection-like structures such as **objects**, **maps** (with all kinds of keys) and **arrays** of any depth. And you can freely and safely mix them all.
+Its default behavior is to compare each value individually with the standand `===` JS/TS's strict-equals operator, which basically deals with all primitive types, but the function also takes care of collection-like structures such as **objects**, **maps** (with all kinds of keys) and **arrays**, of any depth. And you can freely and safely mix them all.
 
 **Classes** (in fact, class instances), **regular expressions**, **dates** and even **functions** are covered, too.
 
-**Circular data structures** are also supported (so there is no risk of the dreaded "Stack Overflow" error).
+**Circular data structures** are now fully supported (so there is no risk of the dreaded "Stack Overflow" error).
 
 All the following return `true`:
 
@@ -126,9 +127,12 @@ compareValues(
     { x: 1, y: 2, z: 3 },
     // Maps with unusual keys.
     new Map([
-      [['a', 'b', 'c'], 1], // string[] key
-      [true, 2], // boolean key
-      [{ x: 0, y: [1, 2, 3], z: null }, 3], // object key, with values of types number, number[] and null
+      // string[] key
+      [['a', 'b', 'c'], 1],
+      // boolean key
+      [true, 2],
+      // object key, with values of types number, number[] and null
+      [{ x: 0, y: [1, 2, 3], z: null }, 3],
     ]),
   ],
   [
@@ -192,20 +196,23 @@ compareValues(
 
 The good news is that the above function, `compareValues()`, is also exported from the package and can be used in your project if needed, even if the use has nothing to do with memoization itself.
 
-However, if a different comparison behavior is necessary you can provide a custom version as the second parameter of the `memoize()` HOF, following the function callback signature below:
+However, if a different comparison behavior is necessary you can provide a custom version as the second parameter of the `memoize()` HOF, following the callback function signature below:
 
 ```ts
-comparisonFn(leftArgs: [p1: P1, p2: P2, … pn: Pn], rightArgs: [p1: P1, p2: P2, … pn: Pn]) => boolean
+comparisonFn(
+  leftArgs: [p1: P1, p2: P2, … pn: Pn],
+  rightArgs: [p1: P1, p2: P2, … pn: Pn]
+) => boolean
 ```
 
 - `leftArgs: [p1: P1, p2: P2, … pn: Pn]`: tuple containing all "left" arguments
 - `rightArgs: [p1: P1, p2: P2, … pn: Pn]`: tuple containing all "right" arguments
 
-PS: Choose whatever names you like for the callback's parameters.
+PS: Choose whatever names you like for the callback function's parameters.
 
 Notice that both tuples have exactly the same types as the original function's arguments. This means the types `P1, P2, … Pn` are always automatically inferred by TS.
 
-The example below provides a custom comparison function that:
+The example below provides a custom comparison callback function that:
 
 - for the 1st parameters, `leftP1` and `rightP1`, of type `number[]`, considers only their size, ignoring their contents
 - for the 2nd ones, `leftP2` and `rightP2`, of type `string`, ignores their case, so 'abc' is equivalent to 'ABC'
@@ -232,12 +239,9 @@ console.log(fn([1, 3, 5], 'aBc', { x: 1 })) // Another "cache hit".
 console.log(fn([0, 1], '', { x: 2 })) // Creates a new (second) cache entry.
 ```
 
-#### Ignoring 1 or more parameters
+#### 💡 Pro Tip: Ignoring 1 or more parameters
 
-If, for some particular reason, you do not want to consider all parameters when looking for a cached entry,
-just provide a custom parameter-comparison function, receiving as usual both `left` and `right`
-parameters, and then call our `compareValues()` default comparison function with only the tuple items
-(which represent the memoized function's parameters) you want to consider. For example:
+If, for some particular reason, you do not want to consider all parameters when looking for a cached entry, just provide a custom parameter-comparison callback function, receiving as usual both `left` and `right` parameters, and then call the `compareValues()` default callback function with only the tuple items (which represent the memoized function's parameters) you want to consider. For example:
 
 ```ts
 const fn = memoize(
@@ -251,7 +255,7 @@ const fn = memoize(
 )
 ```
 
-In the example above we purposely ignore the second parameter, `p2` (represented by `_leftP2` and `_rightP2` inside the parameter-comparison function).
+In the example above we purposely ignored the second parameter, `p2` (represented by `_leftP2` and `_rightP2` inside the default callback function).
 
 ## Managing the internal cache
 
@@ -259,7 +263,7 @@ You can inspect and clear the cache using the following methods:
 
 - `getCache()`: returns the internal cache (currently implemented as an array), used primarily for inspection/debugging purposes.
 - `clearAll()`: purges the entire cache.
-- `clearEntry(p1: P1, p2: P2, … pn: Pn)`: purges an specific entry, based on the arguments `p1, p2, … pn`, applied to the supplied custom parameter-comparison function, if any, or the default one. As usual, the types `P1, P2, … Pn` are always automatically inferred by TS.
+- `clearEntry(p1: P1, p2: P2, … pn: Pn)`: purges an specific entry, based on the arguments `p1, p2, … pn`, applied to the supplied custom parameter-comparison callback function, if any, or the default one. As usual, the types `P1, P2, … Pn` are always automatically inferred by TS.
 
 The example below makes use of these methods:
 
@@ -354,5 +358,5 @@ const fn = memoize(
 This library was inspired by ideas from these relevant contributors:
 
 - [Rahul M. Juliato](https://github.com/LionyxML): provided essential information on how to publish npm packages and integrate with VS Code; also suggested the implementation of cache management methods
-- [Rodrigo Navarro](https://github.com/reu): suggested the inclusion of a custom parameter-comparison function, allowing for greater flexibility in the library; also suggested the use of the TS's function overloading mechanism in order to achieve proper function signature inference
+- [Rodrigo Navarro](https://github.com/reu): suggested the inclusion of a custom parameter-comparison callback function, allowing for greater flexibility in the library; also suggested the use of the TS's function overloading mechanism in order to achieve proper function signature inference
 - [Amanda F. Iaquinta](https://github.com/AmandaFI): helped to improve the documentation with valuable suggestions and additions
