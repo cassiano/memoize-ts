@@ -233,15 +233,22 @@ const fn = memoize(
   },
 )
 
-console.log(fn([1, 2, 3], 'abc', { x: 1 })) // Creates a new (first) cache entry.
-console.log(fn([3, 2, 1], 'ABC', { x: 1 })) // Does a "cache hit" from the previous call.
-console.log(fn([1, 3, 5], 'aBc', { x: 1 })) // Another "cache hit".
-console.log(fn([0, 1], '', { x: 2 })) // Creates a new (second) cache entry.
+// Creates a new (first) cache entry.
+console.log(fn([1, 2, 3], 'abc', { x: 1 }))
+
+// Does a "cache hit" from the previous call.
+console.log(fn([3, 2, 1], 'ABC', { x: 1 }))
+
+// Another "cache hit".
+console.log(fn([1, 3, 5], 'aBc', { x: 1 }))
+
+// Creates a new (second) cache entry.
+console.log(fn([0, 1], '', { x: 2 }))
 ```
 
 #### 💡 Pro Tip: Ignoring 1 or more parameters
 
-If, for some particular reason, you do not want to consider all parameters when looking for a cached entry, just provide a custom parameter-comparison callback function, receiving as usual both `left` and `right` parameters, and then call the `compareValues()` default callback function with only the tuple items (which represent the memoized function's parameters) you want to consider. For example:
+If, for some particular reason, you do not want to consider all parameters when looking for a cached entry, just provide a custom parameter-comparison callback function, receiving as usual both `left` and `right` parameters, and then call the `compareValues()` default callback function with only the tuple items (which represent the memoized function's parameters) you want to consume. For example:
 
 ```ts
 const fn = memoize(
