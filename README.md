@@ -126,9 +126,9 @@ compareValues(
     { x: 1, y: 2, z: 3 },
     // Maps with unusual keys.
     new Map([
-      ['x', 1],
-      [['y'], 2],
-      [{ z: [true, false] }, 3],
+      [['a', 'b', 'c'], 1], // string[] key
+      [true, 2], // boolean key
+      [{ x: 0, y: [1, 2, 3], z: null }, 3], // object key, with values of types number, number[] and null
     ]),
   ],
   [
@@ -142,11 +142,10 @@ compareValues(
     null,
     [10, 20, 30],
     { x: 1, y: 2, z: 3 },
-    // Maps with unusual keys.
     new Map([
-      ['x', 1],
-      [['y'], 2],
-      [{ z: [true, false] }, 3],
+      [['a', 'b', 'c'], 1],
+      [true, 2],
+      [{ x: 0, y: [1, 2, 3], z: null }, 3],
     ]),
   ],
 )
@@ -213,7 +212,7 @@ The example below provides a custom comparison function that:
 - for the 3rd ones, `leftP3` and `rightP3`, of type `Record<string, number>`, considers their JSON (string) representation, taking care of the fact that in JS/TS `{ x: 1 } ≠ { x: 1 }`
 
 ```ts
-const f = memoize(
+const fn = memoize(
   (p1: number[], p2: string, p3: Record<string, number>) => Math.random(),
   (left, right) => {
     const [leftP1, leftP2, leftP3] = left
@@ -227,11 +226,32 @@ const f = memoize(
   },
 )
 
-console.log(f([1, 2, 3], 'abc', { x: 1 })) // Creates a new (first) cache entry.
-console.log(f([3, 2, 1], 'ABC', { x: 1 })) // Does a "cache hit" from the previous call.
-console.log(f([1, 3, 5], 'aBc', { x: 1 })) // Another "cache hit".
-console.log(f([0, 1], '', { x: 2 })) // Creates a new (second) cache entry.
+console.log(fn([1, 2, 3], 'abc', { x: 1 })) // Creates a new (first) cache entry.
+console.log(fn([3, 2, 1], 'ABC', { x: 1 })) // Does a "cache hit" from the previous call.
+console.log(fn([1, 3, 5], 'aBc', { x: 1 })) // Another "cache hit".
+console.log(fn([0, 1], '', { x: 2 })) // Creates a new (second) cache entry.
 ```
+
+#### Ignoring 1 or more parameters
+
+If, for some particular reason, you do not want to consider all parameters when looking for a cached entry,
+just provide a custom parameter-comparison function, receiving as usual both `left` and `right`
+parameters, and then call our `compareValues()` default comparison function with only the tuple items
+(which represent the memoized function's parameters) you want to consider. For example:
+
+```ts
+const fn = memoize(
+  (p1: number[], p2: string, p3: Record<string, number>) => Math.random(),
+  (left, right) => {
+    const [leftP1, _leftP2, leftP3] = left
+    const [rightP1, _rightP2, rightP3] = right
+
+    return compareValues([leftP1, leftP3], [rightP1, rightP3])
+  },
+)
+```
+
+In the example above we purposely ignore the second parameter, `p2` (represented by `_leftP2` and `_rightP2` inside the parameter-comparison function).
 
 ## Managing the internal cache
 
@@ -267,7 +287,7 @@ A simple solution is to pack all parameters either in a plain object or a tuple,
 This **WON'T** work:
 
 ```ts
-const h = memoize(
+const fn = memoize(
   (p1: number[], p2: string, p3: Record<string, number>, p4 = false) =>
     Math.random(),
   (
@@ -286,14 +306,14 @@ However, with the suggested packing, this **WILL** work as expected.
 Using an object:
 
 ```ts
-type HParametersPackedAsObjectType = {
+type FnParametersPackedAsObjectType = {
   p1: number[]
   p2: string
   p3: Record<string, number>
   p4?: boolean
 }
 
-const h = memoize(
+const fn = memoize(
   ({ p1, p2, p3, p4 = false }: HParametersPackedAsObjectType) => Math.random(),
   (
     [{ p1: leftP1, p2: leftP2, p3: leftP3, p4: leftP4 = false }],
@@ -309,14 +329,14 @@ const h = memoize(
 Or a tuple:
 
 ```ts
-type HParametersPackedAsTupleType = [
+type FnParametersPackedAsTupleType = [
   p1: number[],
   p2: string,
   p3: Record<string, number>,
   p4?: boolean,
 ]
 
-const h = memoize(
+const fn = memoize(
   ([p1, p2, p3, p4 = false]: HParametersPackedAsTupleType) => Math.random(),
   (
     [[leftP1, leftP2, leftP3, leftP4 = false]],

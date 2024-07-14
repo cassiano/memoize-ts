@@ -39,7 +39,8 @@ export const compareValues = <T>(
   if (left === right) return true // Are exactly the same values?
 
   // Do they have different types (as returned by the `typeof` operator)? In general this is flagged by TS
-  // at compile-time, but still needed when running in JS.
+  // at compile-time (in particular when the type parameter `T` is automatically inferred by TS), but still
+  // needed when `T` represents a union or when running in JS.
   if (typeof left !== typeof right) return false
 
   if (
