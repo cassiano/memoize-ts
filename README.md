@@ -255,7 +255,7 @@ const fn = memoize(
 )
 ```
 
-In the example above we purposely ignored the second parameter, `p2` (represented by `_leftP2` and `_rightP2` inside the default callback function).
+In the example above we purposely ignored the second parameter, `p2` (represented by `_leftP2` and `_rightP2` inside the custom callback function).
 
 ## Managing the internal cache
 
