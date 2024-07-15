@@ -10,7 +10,7 @@
 - Provides methods for managing the [internal cache](#managing-the-internal-cache)
 - Provides a default callback function for searching entries in the cache, while supporting a [custom parameter-comparison callback function](#optional-custom-parameter-comparison-callback-function)
 - Fully compatible with JavaScript
-- Very small (only 2.17 KiB gzipped when bundled)
+- Very small (only 2.17 KiB gzipped after bundling)
 - No external dependencies
 
 ## Installation
@@ -79,7 +79,7 @@ const fibonacci = memoize(
 console.log(fibonacci(40))
 ```
 
-The following example is very uncommon (have you ever declared a function with `let`, not `const`?), but works perfectly well:
+The following example is very uncommon (have you ever declared a function with `let`, not `const`?), but would work perfectly well:
 
 ```ts
 let fibonacci = (n: number): number => (
