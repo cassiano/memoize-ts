@@ -18,9 +18,17 @@
     "cache",
     "caching",
     "cache management",
+    "100% type-safe",
     "type-safe",
+    "100% type-safe",
+    "fully type-safe",
+    "typed",
+    "100% typed",
+    "fully typed",
     "supports up to 30 parameters",
-    "custom parameter-comparison callback function"
+    "custom parameter-comparison callback function",
+    "comparison function",
+    "equality function"
   ],
   "author": "Cassiano D'Andrea",
   "license": "ISC",
