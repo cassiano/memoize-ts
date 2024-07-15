@@ -58,12 +58,13 @@ export const compareValues = <T>(
   if (Array.isArray(left) && Array.isArray(right)) {
     if (left.length !== right.length) return false // Arrays have different lengths?
 
-    return left.every((leftValue, i) =>
-      compareValues(leftValue, right[i], alreadyCompared),
-    ) // Do all values match?
+    // Do all array items match?
+    return left.every((leftValueItem, i) =>
+      compareValues(leftValueItem, right[i], alreadyCompared),
+    )
   }
 
-  // Are both objects functions?
+  // Are both values functions?
   if (typeof left === 'function' && typeof right === 'function')
     return left.toString() === right.toString() // Compare their string representations.
 
