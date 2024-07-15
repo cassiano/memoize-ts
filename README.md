@@ -34,6 +34,8 @@ pnpm install @cdandrea/memoize-ts
 Simply supply the function to be memoized as the 1st parameter of the `memoize()` HOF. In the example below a recursive function that calculates the Fibonacci sequence is supplied and its memoized version is assigned to the `fibonacci` variable. The memoized function can then be used in the same way as if it were not memoized.
 
 ```ts
+import { memoize } from '@cdandrea/memoize-ts'
+
 const fibonacci = memoize(
   (n: number): number => (
     console.log(`Calculating fibonacci(${n})`),
@@ -194,7 +196,11 @@ compareValues(
 )
 ```
 
-The good news is that the above function, `compareValues()`, is also exported from the package and can be used in your project if needed, even if the use has nothing to do with memoization itself.
+The good news is that the above function, `compareValues()`, is also exported from the package and can be used in your project if needed, even if the use has nothing to do with memoization itself:
+
+```ts
+import { compareValues } from '@cdandrea/memoize-ts'
+```
 
 However, if a different comparison behavior is necessary you can provide a custom version as the second parameter of the `memoize()` HOF, following the callback function signature below:
 
