@@ -12,6 +12,7 @@
     "src/memoize.ts"
   ],
   "keywords": [
+    "typescript",
     "memoization",
     "memoize",
     "cache",
@@ -19,7 +20,7 @@
     "cache management",
     "type-safe",
     "supports up to 30 parameters",
-    "custom parameter-comparison function"
+    "custom parameter-comparison callback function"
   ],
   "author": "Cassiano D'Andrea",
   "license": "ISC",
