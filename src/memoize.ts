@@ -24,7 +24,7 @@ type EmptyObjectType = Record<string | number | symbol, never>
  * regular expressions, dates and even functions are covered, too. Circular data structures are also
  * supported (so there is no risk of the dreaded "Stack Overflow" error).
  *
- * @template T - The left and right values type, such that incompatible types are caught in compile time
+ * @template T - The left and right values type, such that incompatible types are caught at compile time
  * when using TypeScript.
  * @param {T} left - The left value.
  * @param {T} right - The right value.
