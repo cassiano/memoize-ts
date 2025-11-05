@@ -7,12 +7,11 @@
 ## Features
 
 - 100% type-safe
-- Supports functions that have up to 30 parameters
 - Supports [recursive functions](#supporting-recursive-functions)
 - Provides methods for managing the [internal cache](#managing-the-internal-cache)
 - Provides a default callback function for searching entries in the cache, while supporting a [custom parameter-comparison callback function](#optional-custom-parameter-comparison-callback-function)
 - Fully compatible with JavaScript
-- Very small (only 2.17 KiB gzipped after bundling)
+- Very small (only 2.26 KiB gzipped after bundling)
 - No external dependencies
 
 ## Installation
@@ -297,81 +296,10 @@ factorial.clearAll()
 factorial.clearEntry(5)
 ```
 
-## Optional parameters
-
-The current implementation does not support optional parameters (with or without default values), due to the way TS's function overloading works.
-
-A simple solution is to pack all parameters either in a plain object or a tuple, and pass them as a **single** parameter, allowing TS to infer all types (including the optional ones) correctly.
-
-This **WON'T** work:
-
-```ts
-const fn = memoize(
-  (p1: number[], p2: string, p3: Record<string, number>, p4 = false) =>
-    Math.random(),
-  (
-    [leftP1, leftP2, leftP3, leftP4 = false],
-    [rightP1, rightP2, rightP3, rightP4 = false],
-  ) =>
-    leftP1.length === rightP1.length &&
-    leftP2.toUpperCase() === rightP2.toUpperCase() &&
-    JSON.stringify(leftP3) === JSON.stringify(rightP3) &&
-    leftP4 === rightP4,
-)
-```
-
-However, with the suggested packing, this **WILL** work as expected.
-
-Using an object:
-
-```ts
-type FnParametersPackedAsObjectType = {
-  p1: number[]
-  p2: string
-  p3: Record<string, number>
-  p4?: boolean
-}
-
-const fn = memoize(
-  ({ p1, p2, p3, p4 = false }: HParametersPackedAsObjectType) => Math.random(),
-  (
-    [{ p1: leftP1, p2: leftP2, p3: leftP3, p4: leftP4 = false }],
-    [{ p1: rightP1, p2: rightP2, p3: rightP3, p4: rightP4 = false }],
-  ) =>
-    leftP1.length === rightP1.length &&
-    leftP2.toUpperCase() === rightP2.toUpperCase() &&
-    JSON.stringify(leftP3) === JSON.stringify(rightP3) &&
-    leftP4 === rightP4,
-)
-```
-
-Or a tuple:
-
-```ts
-type FnParametersPackedAsTupleType = [
-  p1: number[],
-  p2: string,
-  p3: Record<string, number>,
-  p4?: boolean,
-]
-
-const fn = memoize(
-  ([p1, p2, p3, p4 = false]: HParametersPackedAsTupleType) => Math.random(),
-  (
-    [[leftP1, leftP2, leftP3, leftP4 = false]],
-    [[rightP1, rightP2, rightP3, rightP4 = false]],
-  ) =>
-    leftP1.length === rightP1.length &&
-    leftP2.toUpperCase() === rightP2.toUpperCase() &&
-    JSON.stringify(leftP3) === JSON.stringify(rightP3) &&
-    leftP4 === rightP4,
-)
-```
-
 ## 🙌 Credits
 
 This library was inspired by ideas from these relevant contributors:
 
 - [Rahul M. Juliato](https://github.com/LionyxML): provided essential information on how to publish npm packages and integrate with VS Code; also suggested the implementation of cache management methods
-- [Rodrigo Navarro](https://github.com/reu): suggested the inclusion of a custom parameter-comparison callback function, allowing for greater flexibility in the library; also suggested the use of the TS's function overloading mechanism in order to achieve proper function signature inference
+- [Rodrigo Navarro](https://github.com/reu): suggested the inclusion of a custom parameter-comparison callback function, allowing for greater flexibility in the library
 - [Amanda F. Iaquinta](https://github.com/AmandaFI): helped to improve the documentation with valuable suggestions and additions

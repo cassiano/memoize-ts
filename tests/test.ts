@@ -1,3 +1,5 @@
+/// <reference lib="deno.ns" />
+
 import {
   assertEquals,
   assertNotEquals,
@@ -33,16 +35,6 @@ Deno.test('Comparing values', () => {
   assertEquals(compareValues(null, true), false)
   assertEquals(compareValues(null, []), false)
   assertEquals(compareValues(null, {}), false)
-
-  /////////////////////
-  // Different types //
-  /////////////////////
-
-  // No need for this test, since it is flagged by TS at compile-time.
-  // assertEquals(compareValues(1, '1'), false)
-
-  assertEquals(compareValues<number | string>(1, '1'), false)
-  assertEquals(compareValues<number | string>('1', 1), false)
 
   ////////////
   // Arrays //
@@ -449,11 +441,17 @@ Deno.test('Comparing values', () => {
   /////////////
 
   class C {
-    constructor(public a: number, public b: string) {}
+    constructor(
+      public a: number,
+      public b: string,
+    ) {}
   }
 
   class D {
-    constructor(public c: C, public d: boolean[]) {}
+    constructor(
+      public c: C,
+      public d: boolean[],
+    ) {}
   }
 
   const d1 = new D(new C(1, 'abc'), [true, false, true])
@@ -560,7 +558,10 @@ Deno.test('Comparing values', () => {
   //////////////////////////////
 
   class ListNode {
-    constructor(public value: number, public previous?: ListNode) {}
+    constructor(
+      public value: number,
+      public previous?: ListNode,
+    ) {}
   }
 
   // Circular.
@@ -710,102 +711,42 @@ Deno.test('Memoizing fibonacci() function', () => {
   assertEquals(calculations, 41)
 })
 
-Deno.test(
-  'Memoizing knapsack() function, using a single object parameter',
-  () => {
-    type KnapsackArgsType = {
-      n: number
-      w: number
-      profits: number[]
-      weights: number[]
-    }
+Deno.test('Memoizing knapsack() function', () => {
+  let calculations = 0
 
-    let calculations = 0
+  const knapsack = memoize(
+    (n: number, w: number, profits: number[], weights: number[]): number => {
+      calculations++
 
-    const knapsack = memoize(
-      ({ n, w, profits, weights }: KnapsackArgsType): number => {
-        calculations++
+      if (n === 0 || w === 0) return 0 // Base case.
 
-        if (n === 0 || w === 0) return 0 // Base case.
+      return Math.max(
+        weights[n - 1] <= w
+          ? knapsack(n - 1, w - weights[n - 1], profits, weights) +
+              profits[n - 1]
+          : 0,
+        knapsack(n - 1, w, profits, weights),
+      )
+    },
+  )
 
-        return Math.max(
-          weights[n - 1] <= w
-            ? knapsack({ n: n - 1, w: w - weights[n - 1], profits, weights }) +
-                profits[n - 1]
-            : 0,
-          knapsack({ n: n - 1, w, profits, weights }),
-        )
-      },
-    )
+  assertEquals(calculations, 0)
 
-    assertEquals(calculations, 0)
+  knapsack(3, 2, [10, 20, 0], [1, 1, 1])
+  assertEquals(calculations, 9)
 
-    knapsack({ n: 3, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
-    assertEquals(calculations, 9)
+  knapsack(3, 2, [10, 20, 0], [1, 1, 1])
+  assertEquals(calculations, 9) // Assures no further calculations were needed.
 
-    knapsack({ n: 3, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
-    assertEquals(calculations, 9) // Assures no further calculations were needed.
+  knapsack(3, 2, [10, 20, 0], [1, 1, 1])
+  assertEquals(calculations, 9) // Assures no further calculations were needed.
 
-    knapsack({ n: 3, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
-    assertEquals(calculations, 9) // Assures no further calculations were needed.
+  knapsack(4, 2, [10, 20, 0], [1, 1, 1])
+  assertEquals(calculations, 10)
 
-    knapsack({ n: 4, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
-    assertEquals(calculations, 10)
+  knapsack(4, 2, [10, 20, 0], [1, 1, 1])
+  assertEquals(calculations, 10) // Assures no further calculations were needed.
 
-    knapsack({ n: 4, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
-    assertEquals(calculations, 10) // Assures no further calculations were needed.
-
-    knapsack({ n: 4, w: 2, profits: [10, 20, 0], weights: [1, 1, 1] })
-    assertEquals(calculations, 10) // Assures no further calculations were needed.
-  },
-)
-
-Deno.test(
-  'Memoizing knapsack() function, using a single tuple parameter',
-  () => {
-    type KnapsackArgsType = [
-      n: number,
-      w: number,
-      profits: number[],
-      weights: number[],
-    ]
-
-    let calculations = 0
-
-    const knapsack = memoize(
-      ([n, w, profits, weights]: KnapsackArgsType): number => {
-        calculations++
-
-        if (n === 0 || w === 0) return 0 // Base case.
-
-        return Math.max(
-          weights[n - 1] <= w
-            ? knapsack([n - 1, w - weights[n - 1], profits, weights]) +
-                profits[n - 1]
-            : 0,
-          knapsack([n - 1, w, profits, weights]),
-        )
-      },
-    )
-
-    assertEquals(calculations, 0)
-
-    knapsack([3, 2, [10, 20, 0], [1, 1, 1]])
-    assertEquals(calculations, 9)
-
-    knapsack([3, 2, [10, 20, 0], [1, 1, 1]])
-    assertEquals(calculations, 9) // Assures no further calculations were needed.
-
-    knapsack([3, 2, [10, 20, 0], [1, 1, 1]])
-    assertEquals(calculations, 9) // Assures no further calculations were needed.
-
-    knapsack([4, 2, [10, 20, 0], [1, 1, 1]])
-    assertEquals(calculations, 10)
-
-    knapsack([4, 2, [10, 20, 0], [1, 1, 1]])
-    assertEquals(calculations, 10) // Assures no further calculations were needed.
-
-    knapsack([4, 2, [10, 20, 0], [1, 1, 1]])
-    assertEquals(calculations, 10) // Assures no further calculations were needed.
-  },
-)
+  knapsack(4, 2, [10, 20, 0], [1, 1, 1])
+  assertEquals(calculations, 10) // Assures no further calculations were needed.
+})

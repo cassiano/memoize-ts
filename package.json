@@ -1,6 +1,6 @@
 {
   "name": "@cdandrea/memoize-ts",
-  "version": "1.0.59",
+  "version": "1.0.62",
   "description": "100% type-safe memoize() function written in TS",
   "main": "dist/memoize.js",
   "types": "dist/memoize.d.ts",
@@ -74,5 +74,8 @@
   "bugs": {
     "url": "https://github.com/cassiano/memoize-ts/issues"
   },
-  "homepage": "https://github.com/cassiano/memoize-ts"
+  "homepage": "https://github.com/cassiano/memoize-ts",
+  "dependencies": {
+    "prettier": "^3.5.3"
+  }
 }
